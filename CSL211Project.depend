@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1475215635 source:c:\users\eeshaan sharma\desktop\3rd sem\data structures csl- 201\csl211project\main.cpp
+	<iostream>
+	"Memory.h"
+
+1475215635 c:\users\eeshaan sharma\desktop\3rd sem\data structures csl- 201\csl211project\memory.h
+	<iostream>
+
+1475215774 source:c:\users\eeshaan sharma\desktop\3rd sem\data structures csl- 201\csl211project\memory.cpp
+	"Memory.h"
+
