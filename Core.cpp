@@ -15,6 +15,9 @@ Core::~Core(){
 void Core::run_simplesim(){
 	int counter = INST_MAX/4;
 	for(int i=0; i< counter; i++){
+		cout<<"========================"<<endl;
+		cout<<"INSTRUNCTION "<<dec<<i+1<<endl;
+		cout<<"========================"<<endl;
 		fetch_begin();
 		decode();
 		execute();
@@ -70,31 +73,40 @@ void Core::reset_proc()
 
 //reads from the instruction memory
 void Core::fetch_begin() {
-	instruction_word = MEM->Read(PC);
+	cout<<endl<<"*** FETCH ***"<<endl;
+	instruction_word = MEM->Read(PC);	
 	cout<<"Reading instruction 0x"<<hex<<instruction_word<<" at address 0x"<<hex<<PC<<endl;
+	//cout<<bitset<32> (instruction_word)<<" : Instruction encoding"<<endl;
 }
 
 //updates the instruction register
 void Core::fetch_end() {
+	cout<<endl;
 	if (isBranchTaken){
 		PC = branchPC;
+		cout<<"Updating PC to branchPC i.e. 0x"<<hex<<PC<<endl;
 	}
 	else {
 		PC += 4;
+		cout<<"Updating PC to PC + 4 i.e. 0x"<<hex<<PC<<endl;
 	}
+	cout<<endl;
 }
 
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
 void Core::decode() {
+
+	cout<<endl<<"*** DECODE ***"<<endl;
 	unsigned int opcode1 = inst_bitset(instruction_word, 28, 28);
 	unsigned int opcode2 = inst_bitset(instruction_word, 29, 29);
 	unsigned int opcode3 = inst_bitset(instruction_word, 30, 30);
 	unsigned int opcode4 = inst_bitset(instruction_word, 31, 31);
 	unsigned int opcode5 = inst_bitset(instruction_word, 32, 32);
 	unsigned int I_bit = inst_bitset(instruction_word, 27, 27);
-
+	cout<<"Generating control signals"<<endl;
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		isSt = true;
+		cout<<"isSt ";
 	}
 	else{
 		isSt = false;
@@ -102,6 +114,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
 		isLd = true;
+		cout<<"isLd ";
 	}
 	else{
 		isLd = false;
@@ -109,6 +122,7 @@ void Core::decode() {
 	
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		isBeq = true;
+		cout<<"isBeq ";
 	}
 	else{
 		isBeq = false;
@@ -116,6 +130,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		isBgt = true;
+		cout<<"isBgt ";
 	}
 	else{
 		isBgt = false;
@@ -123,6 +138,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		isRet = true;
+		cout<<"isRet ";
 	}
 	else{
 		isRet = false;
@@ -130,6 +146,7 @@ void Core::decode() {
 
 	if(I_bit == 1){
 		isImmediate = true;
+		cout<<"isImmediate ";
 	}
 	else{
 		isImmediate = false;
@@ -137,6 +154,7 @@ void Core::decode() {
 
 	if( ~(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 == 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
 		isWb = true;
+		cout<<"isWb ";
 	}
 	else{
 		isWb = false;
@@ -144,6 +162,7 @@ void Core::decode() {
 
 	if( opcode5 == 1 && opcode4 == 0 && (	(opcode3 == 0 && opcode2 == 1) || (opcode3 == 1 && opcode2 == 0 && opcode1 == 0) ) 	){
 		isUbranch = true;
+		cout<<"isUbranch ";
 	}
 	else{
 		isUbranch = false;
@@ -151,6 +170,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		isCall = true;
+		cout<<"isCall ";
 	}
 	else{
 		isCall = false;
@@ -158,9 +178,11 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		isAdd = true;
+		cout<<"isAdd ";
 	}
 	else if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1){
 		isAdd = true;
+		cout<<"isAdd ";
 	}
 	else{
 		isAdd = false;
@@ -168,6 +190,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		isSub = true;
+		cout<<"isSub ";
 	}
 	else{
 		isSub = false;
@@ -175,6 +198,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 1){
 		isCmp = true;
+		cout<<"isCmp ";
 	}
 	else{
 		isCmp = false;
@@ -182,6 +206,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		isMul = true;
+		cout<<"isMul ";
 	}
 	else{
 		isMul = false;
@@ -189,6 +214,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		isDiv = true;
+		cout<<"isDiv ";
 	}
 	else{
 		isDiv = false;
@@ -196,6 +222,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		isMod = true;
+		cout<<"isMod ";
 	}
 	else{
 		isMod = false;
@@ -203,6 +230,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		isLsl = true;
+		cout<<"isLsl ";
 	}
 	else{
 		isLsl = false;
@@ -210,6 +238,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		isLsr = true;
+		cout<<"islsr ";
 	}
 	else{
 		isLsr = false;
@@ -217,6 +246,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		isAsr = true;
+		cout<<"isAsr ";
 	}
 	else{
 		isAsr = false;
@@ -224,6 +254,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		isOr = true;
+		cout<<"isOr ";
 	}
 	else{
 		isOr = false;
@@ -231,6 +262,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
 		isAnd = true;
+		cout<<"isAnd ";
 	}
 	else{
 		isAnd = false;
@@ -238,6 +270,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		isNot = true;
+		cout<<"isNot ";
 	}
 	else{
 		isNot = false;
@@ -245,10 +278,12 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		isMov = true;
+		cout<<"isMov ";
 	}
 	else{
 		isMov = false;
 	}
+	cout<<endl;
 
 
 	//////////   immx calculation  ///////////
@@ -271,6 +306,9 @@ void Core::decode() {
 	else{
 		immx = imm<<16;
 	}
+	cout<<endl<<"Immediate calculation - Unsigned: "<<u<<" High: "<<h<<endl;
+	cout<<"Calculated immx is "<<dec<<immx<<" (0x"<<hex<<immx<<")"<<endl;
+
 
 	//////////   branchTarget calculation  ///////////
 	unsigned int offset = inst_bitset(instruction_word, 1,27);
@@ -283,7 +321,7 @@ void Core::decode() {
 	}
 	
 	branchTarget += PC;
-
+	cout<<endl<<"Calculated branchTarget is 0x"<<hex<<branchTarget<<endl;
 
 
 	//////////   Reading Register File  ///////////
@@ -291,102 +329,138 @@ void Core::decode() {
 	unsigned int rs1 = inst_bitset(instruction_word, 19,22);
 	unsigned int rs2 = inst_bitset(instruction_word, 15,18);
 
+	cout<<endl<<"rd: "<<dec<<rd<<" rs1: "<<dec<<rs1<<" rs2: "<<dec<<rs2<<endl;
+
 	if (isRet){
 		operand1 = R[15];
+		cout<<"Since Return instruction Operand1 is ra OR R15"<<endl;
 	}
 	else{
 		operand1 = R[rs1];
 	}
+	cout<<"Operand1: "<<dec<<operand1<<endl;
+
+	
 
 	if (isSt){
 		operand2 = R[rd];
+		cout<<"Since Store instruction Operand2 is rd"<<endl;
 	}
 	else{
 		operand2 = R[rs2];
 	}
+	cout<<"Operand2: "<<dec<<operand2<<endl;
 
 }
 
 //executes the ALU operation based on ALUop
 void Core::execute() {
-
+	cout<<endl<<"*** EXECUTE ***"<<endl;
 	//////////   Branch Unit  ///////////
 	if (isRet){
+		cout<<"Since Return instruction branchPC is operand1"<<endl;
 		branchPC = operand1;
 	}
 	else{
+		cout<<"branchPC is branchTarget"<<endl;
 		branchPC = branchTarget;
 	}
+	cout<<"branchPC: 0x"<<hex<<branchPC<<endl;
 
 	if (isUbranch){
 		isBranchTaken = true;
+		cout<<"isBranchTaken: True"<<endl;
 	}
 	else if(isBeq && eq) {
 		isBranchTaken = true;
+		cout<<"isBranchTaken: True"<<endl;
 	}
 	else if(isBgt && gt){
 		isBranchTaken = true;
+		cout<<"isBranchTaken: True"<<endl;
 	}
 	else{
 		isBranchTaken = false;
+		cout<<"isBranchTaken: False"<<endl;
 	}
 
+
 	//////////   ALU  ///////////
+
+	cout<<endl<<"ALU"<<endl;
 
 	unsigned int A;
 	unsigned int B;
 	
 	A = operand1;
+	cout<<"A: "<<dec<<A<<endl;
 
 	if (isImmediate){
 		B = immx;
+		cout<<"B is immx"<<endl;
 	}
 	else {
 		B = operand2;
+		cout<<"B is operand2"<<endl;
 	}
+	cout<<"B: "<<dec<<B<<endl;
+
 
 	if (isAdd){
+		cout<<"Adding"<<endl;
 		aluResult = A + B;
+		
 	}
-	if (isSub){
+	if (isSub){		
+		cout<<"Subtracting"<<endl;
 		aluResult = A-B;
 	}
 	if (isCmp){
+		cout<<"Comparing"<<endl;
 		if (A-B == 0){
 			eq = true;
 			gt = false;
+			cout<<"Equal"<<endl;
 		}
 		else if (A-B >0){
 			gt = true;
 			eq = false;
+			cout<<"Greator than"<<endl;
 		}
 		else {
 			eq = false;
 			gt = false;
 		}
+		
 	}
 
 	if (isMul){
+		cout<<"Multiplying"<<endl;
 		aluResult = A * B;
 	}
 
 	if (isDiv){
+		cout<<"Dividing"<<endl;
 		aluResult = A / B;
 	}
 
 	if (isMod){
+		cout<<"Mod operation"<<endl;
 		aluResult = A % B;
 	}
 
 	if (isLsl){
+		cout<<"LSL operation"<<endl;
 		aluResult = A << B;
 	}
 
 	if (isLsr){
+		cout<<"LSR operation"<<endl;
 		aluResult = A >> B;
 	}
 
 	if (isAsr){
+		cout<<"ASR operation"<<endl;
 		aluResult = A;
 		unsigned int count = B;
 		while(count){
@@ -403,54 +477,69 @@ void Core::execute() {
 	}
 
 	if (isOr){
+		cout<<"OR operation"<<endl;
 		aluResult = A | B;
 	}
 
 	if (isNot){
+		cout<<"NOT operation"<<endl;
 		aluResult = ~B;
 	}
 
 	if (isAnd){
+		cout<<"AND operation"<<endl;
 		aluResult = A & B;
 	}
 
 	if (isMov){
+		cout<<"MOV operation"<<endl;
 		aluResult = B;
 	}
+
+	cout<<"aluResult: "<<dec<<aluResult<<" (0x"<<hex<<aluResult<<")"<<endl;
 
 
 }
 
 //perform the memory operation
 void Core::mem_access() {
-
+	cout<<endl<<"*** MEMORY ACCESS ***"<<endl;
 	unsigned int mar = mem_address(aluResult);
 	unsigned int mdr = operand2;
 
 	if (isLd){
+		cout<<"Reading from Memory at address 0x"<<hex<<aluResult<<endl;
 		ldResult = MEM->Read(mar);
 	}
 	else if (isSt){
+		cout<<"Writing to Memory at address 0x"<<hex<<aluResult<<" with data "<<dec<<mdr<<endl;
 		MEM->Write(mar,mdr);
+	}
+	else {
+		cout<<"Memory unit Disabled"<<endl;
 	}
 }
 //writes the results back to register file
 void Core::write_back() {
-
+	cout<<endl<<"*** WRITE BACK ***"<<endl;
 	unsigned int result;
 	unsigned int addr;
 
 	if (isLd){
+		cout<<"Since LD inst, data to write is ldResult"<<endl;
 		result = ldResult;
 	}
 	else if (isCall){
+		cout<<"Since CALL inst, data to write is PC + 4"<<endl;
 		result = PC + 4;
 	}
 	else {
+		cout<<"Data to write is aluResult"<<endl;
 		result = aluResult;
 	}
 
 	if (isCall){
+		cout<<"Since CALL inst, address is ra i.e R15"<<endl;
 		addr = 15;
 	}
 	else {
@@ -458,7 +547,11 @@ void Core::write_back() {
 	}
 
 	if (isWb){
+		cout<<"Writing data "<<dec<<result<<" to address R"<<dec<<addr<<endl;
 		R[addr] = result;
+	}
+	else {
+		cout<<"Write Back Disabled"<<endl;
 	}
 }
 
