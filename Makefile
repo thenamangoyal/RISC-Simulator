@@ -6,8 +6,8 @@ sim: main.o Core.o Memory.o
 main.o: main.cpp Core.h Memory.h
 	g++ -c main.cpp
 
-core.o: core.cpp Core.h Memory.h
-	g++ -c core.cpp
+Core.o: Core.cpp Core.h Memory.h
+	g++ -c Core.cpp
 
 Memory.o: Memory.cpp Memory.h
 	g++ -c Memory.cpp
