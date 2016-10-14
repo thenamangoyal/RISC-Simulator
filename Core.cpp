@@ -259,11 +259,9 @@ void Core::decode() {
 	else {
 		branchTarget = offset<<2;
 	}
-	cout<<bitset<32>(instruction_word)<<endl;
-	cout<<bitset<32>(branchTarget)<<endl;
-
+	
 	branchTarget += PC;
-	cout<<bitset<32>(branchTarget)<<endl;
+	
 
 
 
