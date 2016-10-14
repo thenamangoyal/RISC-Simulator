@@ -47,6 +47,7 @@ class Core
 
 		unsigned int immx;
 		unsigned int branchTarget;
+		unsigned int branchPC;
 
 		Memory* MEM;
 		unsigned int INST_MAX;

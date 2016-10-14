@@ -231,6 +231,7 @@ void Core::decode() {
 	}
 
 
+	//////////   Immx calculation  ///////////
 	unsigned int imm = inst_bitset(instruction_word, 1, 16);
 	unsigned int u = inst_bitset(instruction_word, 17, 17);
 	unsigned int h = inst_bitset(instruction_word, 18, 18);
@@ -251,6 +252,7 @@ void Core::decode() {
 		immx = imm<<16;
 	}
 
+	//////////   brachTarget calculation  ///////////
 	unsigned int offset = inst_bitset(instruction_word, 1,27);
 
 	if (inst_bitset(instruction_word, 27, 27) == 1){
@@ -261,14 +263,35 @@ void Core::decode() {
 	}
 	
 	branchTarget += PC;
-	
 
 
+
+	//////////   Reading Register File  ///////////
+	unsigned int rd = inst_bitset(instruction_word, 23,26);
+	unsigned int rs1 = inst_bitset(instruction_word, 19,22);
+	unsigned int rs2 = inst_bitset(instruction_word, 15,18);
+
+	if (isRet){
+		operand1 = R[15];
+	}
+	else{
+		operand1 = R[rs1];
+	}
+
+	if (isSt){
+		operand2 = R[rd];
+	}
+	else{
+		operand2 = R[rs2];
+	}
 
 }
+
 //executes the ALU operation based on ALUop
 void Core::execute() {
+
 }
+
 //perform the memory operation
 void Core::mem_access() {
 }
