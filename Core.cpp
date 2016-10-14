@@ -12,6 +12,18 @@ Core::~Core(){
 	delete MEM;
 }
 
+void Core::run_simplesim(){
+	int counter = INST_MAX/4;
+	for(int i=0; i< counter; i++){
+		fetch_begin();
+		decode();
+		execute();
+		mem_access();
+		write_back();
+		fetch_end();
+	}
+}
+
 void Core::load_program_memory(const char* file_name){
 	ifstream inst_file;
 	inst_file.open(file_name,ios::in);
@@ -56,12 +68,22 @@ void Core::reset_proc()
 	gt = false;
 }
 
-//reads from the instruction memory and updates the instruction register
-void Core::fetch() {
+//reads from the instruction memory
+void Core::fetch_begin() {
 	instruction_word = MEM->Read(PC);
 	cout<<"Reading instruction 0x"<<hex<<instruction_word<<" at address 0x"<<hex<<PC<<endl;
-		
 }
+
+//updates the instruction register
+void Core::fetch_end() {
+	if (isBranchTaken){
+		PC = branchPC;
+	}
+	else {
+		PC += 4;
+	}
+}
+
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
 void Core::decode() {
 	unsigned int opcode1 = inst_bitset(instruction_word, 28, 28);
@@ -332,19 +354,112 @@ void Core::execute() {
 	if (isCmp){
 		if (A-B == 0){
 			eq = true;
+			gt = false;
 		}
 		else if (A-B >0){
 			gt = true;
+			eq = false;
+		}
+		else {
+			eq = false;
+			gt = false;
 		}
 	}
+
+	if (isMul){
+		aluResult = A * B;
+	}
+
+	if (isDiv){
+		aluResult = A / B;
+	}
+
+	if (isMod){
+		aluResult = A % B;
+	}
+
+	if (isLsl){
+		aluResult = A << B;
+	}
+
+	if (isLsr){
+		aluResult = A >> B;
+	}
+
+	if (isAsr){
+		aluResult = A;
+		unsigned int count = B;
+		while(count){
+			if (aluResult>>31 == 1){
+				aluResult>>1;
+				aluResult = aluResult | 0x80000000;
+			}
+			else{
+				aluResult>>1;
+			}		
+
+			count--;
+		}
+	}
+
+	if (isOr){
+		aluResult = A | B;
+	}
+
+	if (isNot){
+		aluResult = ~B;
+	}
+
+	if (isAnd){
+		aluResult = A & B;
+	}
+
+	if (isMov){
+		aluResult = B;
+	}
+
 
 }
 
 //perform the memory operation
 void Core::mem_access() {
+
+	unsigned int mar = mem_address(aluResult);
+	unsigned int mdr = operand2;
+
+	if (isLd){
+		ldResult = MEM->Read(mar);
+	}
+	else if (isSt){
+		MEM->Write(mar,mdr);
+	}
 }
 //writes the results back to register file
 void Core::write_back() {
+
+	unsigned int result;
+	unsigned int addr;
+
+	if (isLd){
+		result = ldResult;
+	}
+	else if (isCall){
+		result = PC + 4;
+	}
+	else {
+		result = aluResult;
+	}
+
+	if (isCall){
+		addr = 15;
+	}
+	else {
+		addr = inst_bitset(instruction_word,23,26);
+	}
+
+	if (isWb){
+		R[addr] = result;
+	}
 }
 
 unsigned int Core::mem_address(unsigned int data_address){

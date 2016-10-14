@@ -11,7 +11,7 @@
 
 #include "Memory.h"
 
-const unsigned int MEM_CAPACITY  = 100;
+const unsigned int MEM_CAPACITY  = 100000;
 
 class Core
 {
@@ -24,8 +24,10 @@ class Core
 		void load_program_memory(const char* file_name);
 		void write_data_memory();
 
-		//reads from the instruction memory and updates the instruction register
-		void fetch();
+		//reads from the instruction memory
+		void fetch_begin();
+		//updates the instruction register
+		void fetch_end();
 		//reads the instruction register, reads operand1, operand2 from register file, decides the operation to be performed in execute stage
 		void decode();
 		//executes the ALU operation based on ALUop
@@ -50,6 +52,7 @@ class Core
 		unsigned int branchTarget;
 		unsigned int branchPC;
 		unsigned int aluResult;
+		unsigned int ldResult;
 
 		Memory* MEM;
 		unsigned int INST_MAX;
