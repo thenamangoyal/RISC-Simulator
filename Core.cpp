@@ -307,7 +307,7 @@ void Core::decode() {
 		immx = imm<<16;
 	}
 
-	cout<<"Immediate is "<<dec<<immx<<" (0x"<<hex<<immx<<"). Unsigned: "<<u<<" High: "<<h<<endl;
+	cout<<"Immediate is "<<dec<<immx<<" (0x"<<hex<<immx<<"), for which Unsigned: "<<u<<" High: "<<h<<endl;
 
 
 	//////////   branchTarget calculation  ///////////
@@ -333,23 +333,22 @@ void Core::decode() {
 
 	if (isRet){
 		operand1 = R[15];
-		cout<<"RET inst, Operand1 is ra OR R15"<<endl;
+		cout<<"Operand1: "<<dec<<operand1<<" (ra OR R15)"<<endl;
 	}
 	else{
 		operand1 = R[rs1];
+		cout<<"Operand1: "<<dec<<operand1<<" (rs1)"<<endl;
 	}
-	cout<<"Operand1: "<<dec<<operand1<<endl;
-
 	
 
 	if (isSt){
 		operand2 = R[rd];
-		cout<<"ST inst, Operand2 is rd"<<endl;
+		cout<<"Operand2: "<<dec<<operand2<<" (rd)"<<endl;
 	}
 	else{
 		operand2 = R[rs2];
+		cout<<"Operand2: "<<dec<<operand2<<" (rs2)"<<endl;
 	}
-	cout<<"Operand2: "<<dec<<operand2<<endl;
 
 }
 
@@ -359,14 +358,14 @@ void Core::execute() {
 	//////////   Branch Unit  ///////////
 	cout<<"*** Branch Unit"<<endl;
 	if (isRet){
-		cout<<"RET inst, branchPC is operand1"<<endl;
 		branchPC = operand1;
+		cout<<"branchPC: 0x"<<hex<<branchPC<<" (operand1)"<<endl;
 	}
 	else{
-		cout<<"branchPC is branchTarget"<<endl;
 		branchPC = branchTarget;
+		cout<<"branchPC: 0x"<<hex<<branchPC<<" (branchTarget)"<<endl;
 	}
-	cout<<"branchPC: 0x"<<hex<<branchPC<<endl;
+	
 
 	if (isUbranch){
 		isBranchTaken = true;
