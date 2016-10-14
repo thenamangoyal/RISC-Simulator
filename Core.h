@@ -44,6 +44,7 @@ class Core
         unsigned int instruction_word;
 		unsigned int operand1;
 		unsigned int operand2;
+		unsigned int immx;
 		Memory* MEM;
 		unsigned int INST_MAX;
 

@@ -71,15 +71,210 @@ void Core::decode() {
 	unsigned int opcode3 = inst_bitset(instruction_word, 30,30);
 	unsigned int opcode4 = inst_bitset(instruction_word, 31,31);
 	unsigned int opcode5 = inst_bitset(instruction_word, 32,32);
+	unsigned int I_bit = inst_bitset(instruction_word, 27,27);
+
+		bool isSt;
+		bool isLd;
+		bool isBeq;
+		bool isBgt;
+		bool isRet;
+		bool isImmediate;
+		bool isWb;
+		bool isUbranch;
+		bool isCall;
+		bool isAdd;
+		bool isSub;
+		bool isCmp;
+		bool isMul;
+		bool isDiv;
+		bool isMod;
+		bool isLsl;
+		bool isLsr;
+		bool isAsr;
+		bool inOr;
+		bool isAnd;
+		bool isNot;
+		bool isMov;
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		isSt = true;
-		cout<<"Is Store"<<endl;
 	}
 	else{
 		isSt = false;
 	}
+
+	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
+		isLd = true;
+	}
+	else{
+		isLd = false;
+	}
 	
+	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
+		isBeq = true;
+	}
+	else{
+		isBeq = false;
+	}
+
+	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
+		isBgt = true;
+	}
+	else{
+		isBgt = false;
+	}
+
+	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
+		isRet = true;
+	}
+	else{
+		isRet = false;
+	}
+
+	if(I_bit == 1){
+		isImmediate = true;
+	}
+	else{
+		isImmediate = false;
+	}
+
+	if( ~(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 = 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
+		isWb = true;
+	}
+	else{
+		isWb = false;
+	}
+
+	if( opcode5 = 1 && opcode4 = 0 && (	(opcode3 == 0 && opcode2 == 1) || (opcode3 == 1 && opcode2 == 0 && opcode1 == 0) ) 	){
+		isUbranch = true;
+	}
+	else{
+		isUbranch = false;
+	}
+
+	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
+		isCall = true;
+	}
+	else{
+		isCall = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
+		isAdd = true;
+	}
+	else if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1){
+		isAdd = true;
+	}
+	else{
+		isAdd = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
+		isSub = true;
+	}
+	else{
+		isSub = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 1){
+		isCmp = true;
+	}
+	else{
+		isCmp = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
+		isMul = true;
+	}
+	else{
+		isMul = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
+		isDiv = true;
+	}
+	else{
+		isDiv = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
+		isMod = true;
+	}
+	else{
+		isMod = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
+		isLsl = true;
+	}
+	else{
+		isLsl = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
+		isLsr = true;
+	}
+	else{
+		isLsr = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
+		isAsr = true;
+	}
+	else{
+		isAsr = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
+		isOr = true;
+	}
+	else{
+		isOr = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
+		isAnd = true;
+	}
+	else{
+		isAnd = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
+		isNot = true;
+	}
+	else{
+		isNot = false;
+	}
+
+	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
+		isMov = true;
+	}
+	else{
+		isMov = false;
+	}
+
+
+	unsigned int imm = inst_bitset(instruction_word, 1,16);
+	unsigned int u = inst_bitset(instruction_word, 17,17);
+	unsigned int h = inst_bitset(instruction_word, 18,18);
+
+
+	if (u == 0 && h == 0){
+		if (inst_bitset(instruction_word, 16,16) == 1){
+			immx = 0xffff0000 | imm;
+		}
+		else{
+			immx = imm;
+		}
+	}
+	else if (u == 1){
+		immx = imm;
+	}
+	else{
+		immx = imm<<16;
+	}
+	cout<<bitset<32>(instruction_word)<<endl;
+	cout<<bitset<32>(immx)<<endl;
 
 
 }
