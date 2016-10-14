@@ -153,7 +153,7 @@ void Core::decode() {
 		isImmediate = false;
 	}
 
-	if( ~(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 == 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
+	if( !(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 == 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
 		isWb = true;
 		cout<<"isWb ";
 	}
@@ -416,16 +416,16 @@ void Core::execute() {
 	}
 	if (isSub){		
 		cout<<"SUB operation"<<endl;
-		aluResult = A-B;
+		aluResult = A + (~B) + 1;
 	}
 	if (isCmp){
 		cout<<"CMP operation"<<endl;
-		if (A-B == 0){
+		if (A +(~B)+1  == 0){
 			eq = true;
 			gt = false;
 			cout<<"Equal"<<endl;
 		}
-		else if (A-B >0){
+		else if (inst_bitset(A+(~B)+1,32,32)   == 0){
 			gt = true;
 			eq = false;
 			cout<<"Greator than"<<endl;
