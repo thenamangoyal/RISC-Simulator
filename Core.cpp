@@ -73,9 +73,9 @@ void Core::reset_proc()
 
 //reads from the instruction memory
 void Core::fetch_begin() {
-	cout<<endl<<"*** FETCH ***"<<endl;
+	cout<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 	instruction_word = MEM->Read(PC);	
-	cout<<"Reading instruction 0x"<<hex<<instruction_word<<" at address 0x"<<hex<<PC<<endl;
+	cout<<"Instruction 0x"<<hex<<instruction_word<<" read at address 0x"<<hex<<PC<<endl;
 	//cout<<bitset<32> (instruction_word)<<" : Instruction encoding"<<endl;
 }
 
@@ -96,14 +96,14 @@ void Core::fetch_end() {
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
 void Core::decode() {
 
-	cout<<endl<<"*** DECODE ***"<<endl;
+	cout<<endl<<"!--------- DECODE ---------!"<<endl<<endl;
 	unsigned int opcode1 = inst_bitset(instruction_word, 28, 28);
 	unsigned int opcode2 = inst_bitset(instruction_word, 29, 29);
 	unsigned int opcode3 = inst_bitset(instruction_word, 30, 30);
 	unsigned int opcode4 = inst_bitset(instruction_word, 31, 31);
 	unsigned int opcode5 = inst_bitset(instruction_word, 32, 32);
 	unsigned int I_bit = inst_bitset(instruction_word, 27, 27);
-	cout<<"Generating control signals"<<endl;
+	cout<<"Control Signals"<<endl;
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		isSt = true;
 		cout<<"isSt ";
@@ -306,8 +306,8 @@ void Core::decode() {
 	else{
 		immx = imm<<16;
 	}
-	cout<<endl<<"Immediate calculation - Unsigned: "<<u<<" High: "<<h<<endl;
-	cout<<"Calculated immx is "<<dec<<immx<<" (0x"<<hex<<immx<<")"<<endl;
+
+	cout<<"Immediate is "<<dec<<immx<<" (0x"<<hex<<immx<<"). Unsigned: "<<u<<" High: "<<h<<endl;
 
 
 	//////////   branchTarget calculation  ///////////
@@ -321,7 +321,7 @@ void Core::decode() {
 	}
 	
 	branchTarget += PC;
-	cout<<endl<<"Calculated branchTarget is 0x"<<hex<<branchTarget<<endl;
+	cout<<endl<<"branchTarget is 0x"<<hex<<branchTarget<<endl;
 
 
 	//////////   Reading Register File  ///////////
@@ -329,11 +329,11 @@ void Core::decode() {
 	unsigned int rs1 = inst_bitset(instruction_word, 19,22);
 	unsigned int rs2 = inst_bitset(instruction_word, 15,18);
 
-	cout<<endl<<"rd: "<<dec<<rd<<" rs1: "<<dec<<rs1<<" rs2: "<<dec<<rs2<<endl;
+	cout<<endl<<"rd: R"<<dec<<rd<<" rs1: R"<<dec<<rs1<<" rs2: R"<<dec<<rs2<<endl;
 
 	if (isRet){
 		operand1 = R[15];
-		cout<<"Since Return instruction Operand1 is ra OR R15"<<endl;
+		cout<<"RET inst, Operand1 is ra OR R15"<<endl;
 	}
 	else{
 		operand1 = R[rs1];
@@ -344,7 +344,7 @@ void Core::decode() {
 
 	if (isSt){
 		operand2 = R[rd];
-		cout<<"Since Store instruction Operand2 is rd"<<endl;
+		cout<<"ST inst, Operand2 is rd"<<endl;
 	}
 	else{
 		operand2 = R[rs2];
@@ -355,10 +355,11 @@ void Core::decode() {
 
 //executes the ALU operation based on ALUop
 void Core::execute() {
-	cout<<endl<<"*** EXECUTE ***"<<endl;
+	cout<<endl<<"!--------- EXECUTE ---------!"<<endl<<endl;
 	//////////   Branch Unit  ///////////
+	cout<<"*** Branch Unit"<<endl;
 	if (isRet){
-		cout<<"Since Return instruction branchPC is operand1"<<endl;
+		cout<<"RET inst, branchPC is operand1"<<endl;
 		branchPC = operand1;
 	}
 	else{
@@ -387,7 +388,7 @@ void Core::execute() {
 
 	//////////   ALU  ///////////
 
-	cout<<endl<<"ALU"<<endl;
+	cout<<endl<<"*** ALU"<<endl;
 
 	unsigned int A;
 	unsigned int B;
@@ -397,26 +398,26 @@ void Core::execute() {
 
 	if (isImmediate){
 		B = immx;
-		cout<<"B is immx"<<endl;
+		cout<<"B: "<<dec<<B<<" (immx)"<<endl;
 	}
 	else {
 		B = operand2;
-		cout<<"B is operand2"<<endl;
+		cout<<"B: "<<dec<<B<<" (operand2)"<<endl;
 	}
-	cout<<"B: "<<dec<<B<<endl;
+	
 
 
 	if (isAdd){
-		cout<<"Adding"<<endl;
+		cout<<"ADD operation"<<endl;
 		aluResult = A + B;
 		
 	}
 	if (isSub){		
-		cout<<"Subtracting"<<endl;
+		cout<<"SUB operation"<<endl;
 		aluResult = A-B;
 	}
 	if (isCmp){
-		cout<<"Comparing"<<endl;
+		cout<<"CMP operation"<<endl;
 		if (A-B == 0){
 			eq = true;
 			gt = false;
@@ -435,17 +436,17 @@ void Core::execute() {
 	}
 
 	if (isMul){
-		cout<<"Multiplying"<<endl;
+		cout<<"MUL operation"<<endl;
 		aluResult = A * B;
 	}
 
 	if (isDiv){
-		cout<<"Dividing"<<endl;
+		cout<<"DIV operation"<<endl;
 		aluResult = A / B;
 	}
 
 	if (isMod){
-		cout<<"Mod operation"<<endl;
+		cout<<"MOD operation"<<endl;
 		aluResult = A % B;
 	}
 
@@ -503,7 +504,7 @@ void Core::execute() {
 
 //perform the memory operation
 void Core::mem_access() {
-	cout<<endl<<"*** MEMORY ACCESS ***"<<endl;
+	cout<<endl<<"!--------- MEMORY ACCESS ---------!"<<endl<<endl;
 	unsigned int mar = mem_address(aluResult);
 	unsigned int mdr = operand2;
 
@@ -521,34 +522,36 @@ void Core::mem_access() {
 }
 //writes the results back to register file
 void Core::write_back() {
-	cout<<endl<<"*** WRITE BACK ***"<<endl;
+	cout<<endl<<"!--------- WRITE BACK ---------!"<<endl<<endl;
 	unsigned int result;
 	unsigned int addr;
 
-	if (isLd){
-		cout<<"Since LD inst, data to write is ldResult"<<endl;
-		result = ldResult;
-	}
-	else if (isCall){
-		cout<<"Since CALL inst, data to write is PC + 4"<<endl;
-		result = PC + 4;
-	}
-	else {
-		cout<<"Data to write is aluResult"<<endl;
-		result = aluResult;
-	}
-
-	if (isCall){
-		cout<<"Since CALL inst, address is ra i.e R15"<<endl;
-		addr = 15;
-	}
-	else {
-		addr = inst_bitset(instruction_word,23,26);
-	}
-
 	if (isWb){
-		cout<<"Writing data "<<dec<<result<<" to address R"<<dec<<addr<<endl;
+
+		if (isLd){
+			cout<<"Since LD inst, data to write is ldResult"<<endl;
+			result = ldResult;
+		}
+		else if (isCall){
+			cout<<"Since CALL inst, data to write is PC + 4"<<endl;
+			result = PC + 4;
+		}
+		else {
+			cout<<"Data to write is aluResult"<<endl;
+			result = aluResult;
+		}
+
+		if (isCall){
+			cout<<"Since CALL inst, register is ra i.e R15"<<endl;
+			addr = 15;
+		}
+		else {
+			addr = inst_bitset(instruction_word,23,26);
+		}
+	
+		cout<<"Writing data "<<dec<<result<<" to register R"<<dec<<addr<<endl;
 		R[addr] = result;
+
 	}
 	else {
 		cout<<"Write Back Disabled"<<endl;
