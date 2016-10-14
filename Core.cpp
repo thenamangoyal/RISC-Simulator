@@ -13,10 +13,10 @@ Core::~Core(){
 }
 
 void Core::run_simplesim(){
-	int counter = INST_MAX/4;
-	for(int i=0; i< counter; i++){
+	int counter = 0;
+	while (PC != INST_MAX){
 		cout<<"========================"<<endl;
-		cout<<"INSTRUNCTION "<<dec<<i+1<<endl;
+		cout<<"INSTRUNCTION "<<dec<<counter+1<<endl;
 		cout<<"========================"<<endl;
 		fetch_begin();
 		decode();
@@ -24,6 +24,7 @@ void Core::run_simplesim(){
 		mem_access();
 		write_back();
 		fetch_end();
+		counter++;
 	}
 }
 
