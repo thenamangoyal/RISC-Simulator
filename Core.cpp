@@ -287,6 +287,7 @@ void Core::decode() {
 
 
 	//////////   immx calculation  ///////////
+	cout<<endl;
 	unsigned int imm = inst_bitset(instruction_word, 1, 16);
 	unsigned int u = inst_bitset(instruction_word, 17, 17);
 	unsigned int h = inst_bitset(instruction_word, 18, 18);
@@ -299,15 +300,16 @@ void Core::decode() {
 		else{
 			immx = imm;
 		}
+		cout<<"Immediate is "<<dec<<immx<<" (0x"<<hex<<immx<<")"<<endl;
 	}
 	else if (u == 1){
 		immx = imm;
+		cout<<"Immediate is "<<dec<<immx<<" (0x"<<hex<<immx<<") and is Unsigned"<<endl;
 	}
 	else{
 		immx = imm<<16;
+		cout<<"Immediate is "<<dec<<immx<<" (0x"<<hex<<immx<<") ans is High"<<endl;
 	}
-
-	cout<<"Immediate is "<<dec<<immx<<" (0x"<<hex<<immx<<"), for which Unsigned: "<<u<<" High: "<<h<<endl;
 
 
 	//////////   branchTarget calculation  ///////////
