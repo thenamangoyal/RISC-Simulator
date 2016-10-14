@@ -2,26 +2,26 @@
 
 using namespace std;
 
-Memory::Memory(int Size)
+Memory::Memory(unsigned int Size)
 {
     capacity = Size;
     start_Add = new char[capacity];
 }
 
-int Memory::Read(int address) const
+unsigned int Memory::Read(unsigned int address) const
 {
     if(address >= 0 && address < capacity)
     {
-        int *add = (int *)(start_Add + address);
+        unsigned int *add = (unsigned int *)(start_Add + address);
         return *add;
     }
 }
 
-void Memory::Write(int address, int data)
+void Memory::Write(unsigned int address, unsigned int data)
 {
     if(address >= 0 && address < capacity)
     {
-        int *add = (int *)(start_Add + address);
+        unsigned int *add = (unsigned int *)(start_Add + address);
         *add = data;
     }
 }

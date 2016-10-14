@@ -6,14 +6,14 @@
 class Memory
 {
     public:
-        Memory(int Size = 10000);
-        int Read(int) const;
-        void Write(int, int);
+        Memory(unsigned int Size = 10000);
+        unsigned int Read(unsigned int address) const;
+        void Write(unsigned int address, unsigned int data);
         virtual ~Memory();
 
     protected:
     private:
-        int capacity;
+        unsigned int capacity;
         char *start_Add;
 };
 
