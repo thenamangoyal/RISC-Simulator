@@ -44,7 +44,10 @@ class Core
         unsigned int instruction_word;
 		unsigned int operand1;
 		unsigned int operand2;
+
 		unsigned int immx;
+		unsigned int branchTarget;
+
 		Memory* MEM;
 		unsigned int INST_MAX;
 
@@ -66,7 +69,7 @@ class Core
 		bool isLsl;
 		bool isLsr;
 		bool isAsr;
-		bool inOr;
+		bool isOr;
 		bool isAnd;
 		bool isNot;
 		bool isMov;

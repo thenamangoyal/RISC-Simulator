@@ -66,35 +66,12 @@ void Core::fetch() {
 }
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
 void Core::decode() {
-	unsigned int opcode1 = inst_bitset(instruction_word, 28,28);
-	unsigned int opcode2 = inst_bitset(instruction_word, 29,29);
-	unsigned int opcode3 = inst_bitset(instruction_word, 30,30);
-	unsigned int opcode4 = inst_bitset(instruction_word, 31,31);
-	unsigned int opcode5 = inst_bitset(instruction_word, 32,32);
-	unsigned int I_bit = inst_bitset(instruction_word, 27,27);
-
-		bool isSt;
-		bool isLd;
-		bool isBeq;
-		bool isBgt;
-		bool isRet;
-		bool isImmediate;
-		bool isWb;
-		bool isUbranch;
-		bool isCall;
-		bool isAdd;
-		bool isSub;
-		bool isCmp;
-		bool isMul;
-		bool isDiv;
-		bool isMod;
-		bool isLsl;
-		bool isLsr;
-		bool isAsr;
-		bool inOr;
-		bool isAnd;
-		bool isNot;
-		bool isMov;
+	unsigned int opcode1 = inst_bitset(instruction_word, 28, 28);
+	unsigned int opcode2 = inst_bitset(instruction_word, 29, 29);
+	unsigned int opcode3 = inst_bitset(instruction_word, 30, 30);
+	unsigned int opcode4 = inst_bitset(instruction_word, 31, 31);
+	unsigned int opcode5 = inst_bitset(instruction_word, 32, 32);
+	unsigned int I_bit = inst_bitset(instruction_word, 27, 27);
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		isSt = true;
@@ -138,14 +115,14 @@ void Core::decode() {
 		isImmediate = false;
 	}
 
-	if( ~(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 = 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
+	if( ~(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 == 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
 		isWb = true;
 	}
 	else{
 		isWb = false;
 	}
 
-	if( opcode5 = 1 && opcode4 = 0 && (	(opcode3 == 0 && opcode2 == 1) || (opcode3 == 1 && opcode2 == 0 && opcode1 == 0) ) 	){
+	if( opcode5 == 1 && opcode4 == 0 && (	(opcode3 == 0 && opcode2 == 1) || (opcode3 == 1 && opcode2 == 0 && opcode1 == 0) ) 	){
 		isUbranch = true;
 	}
 	else{
@@ -254,13 +231,13 @@ void Core::decode() {
 	}
 
 
-	unsigned int imm = inst_bitset(instruction_word, 1,16);
-	unsigned int u = inst_bitset(instruction_word, 17,17);
-	unsigned int h = inst_bitset(instruction_word, 18,18);
+	unsigned int imm = inst_bitset(instruction_word, 1, 16);
+	unsigned int u = inst_bitset(instruction_word, 17, 17);
+	unsigned int h = inst_bitset(instruction_word, 18, 18);
 
 
 	if (u == 0 && h == 0){
-		if (inst_bitset(instruction_word, 16,16) == 1){
+		if (inst_bitset(instruction_word, 16, 16) == 1){
 			immx = 0xffff0000 | imm;
 		}
 		else{
@@ -273,8 +250,21 @@ void Core::decode() {
 	else{
 		immx = imm<<16;
 	}
+
+	unsigned int offset = inst_bitset(instruction_word, 1,27);
+
+	if (inst_bitset(instruction_word, 27, 27) == 1){
+		branchTarget = 0xe0000000 | (offset<<2);
+	}
+	else {
+		branchTarget = offset<<2;
+	}
 	cout<<bitset<32>(instruction_word)<<endl;
-	cout<<bitset<32>(immx)<<endl;
+	cout<<bitset<32>(branchTarget)<<endl;
+
+	branchTarget += PC;
+	cout<<bitset<32>(branchTarget)<<endl;
+
 
 
 }
