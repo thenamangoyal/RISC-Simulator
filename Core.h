@@ -41,6 +41,7 @@ class Core
         unsigned int R[16];
         unsigned int PC;
         bool eq, gt;
+
         unsigned int instruction_word;
 		unsigned int operand1;
 		unsigned int operand2;
@@ -48,9 +49,12 @@ class Core
 		unsigned int immx;
 		unsigned int branchTarget;
 		unsigned int branchPC;
+		unsigned int aluResult;
 
 		Memory* MEM;
 		unsigned int INST_MAX;
+
+		bool isBranchTaken;
 
 		bool isSt;
 		bool isLd;

@@ -52,10 +52,8 @@ void Core::reset_proc()
 	}
 	R[14] = MEM_CAPACITY - INST_MAX; // Stack Pointer initialize
 	PC = 0;
-	eq = gt = false;
-	instruction_word = 0;
-	operand1 = 0;
-	operand2 = 0; 
+	eq = false;
+	gt = false;
 }
 
 //reads from the instruction memory and updates the instruction register
@@ -231,7 +229,7 @@ void Core::decode() {
 	}
 
 
-	//////////   Immx calculation  ///////////
+	//////////   immx calculation  ///////////
 	unsigned int imm = inst_bitset(instruction_word, 1, 16);
 	unsigned int u = inst_bitset(instruction_word, 17, 17);
 	unsigned int h = inst_bitset(instruction_word, 18, 18);
@@ -252,7 +250,7 @@ void Core::decode() {
 		immx = imm<<16;
 	}
 
-	//////////   brachTarget calculation  ///////////
+	//////////   branchTarget calculation  ///////////
 	unsigned int offset = inst_bitset(instruction_word, 1,27);
 
 	if (inst_bitset(instruction_word, 27, 27) == 1){
@@ -289,6 +287,56 @@ void Core::decode() {
 
 //executes the ALU operation based on ALUop
 void Core::execute() {
+
+	//////////   Branch Unit  ///////////
+	if (isRet){
+		branchPC = operand1;
+	}
+	else{
+		branchPC = branchTarget;
+	}
+
+	if (isUbranch){
+		isBranchTaken = true;
+	}
+	else if(isBeq && eq) {
+		isBranchTaken = true;
+	}
+	else if(isBgt && gt){
+		isBranchTaken = true;
+	}
+	else{
+		isBranchTaken = false;
+	}
+
+	//////////   ALU  ///////////
+
+	unsigned int A;
+	unsigned int B;
+	
+	A = operand1;
+
+	if (isImmediate){
+		B = immx;
+	}
+	else {
+		B = operand2;
+	}
+
+	if (isAdd){
+		aluResult = A + B;
+	}
+	if (isSub){
+		aluResult = A-B;
+	}
+	if (isCmp){
+		if (A-B == 0){
+			eq = true;
+		}
+		else if (A-B >0){
+			gt = true;
+		}
+	}
 
 }
 
