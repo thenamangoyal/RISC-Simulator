@@ -84,7 +84,7 @@ void Core::fetch_end() {
 	cout<<endl;
 	if (isBranchTaken){
 		PC = branchPC;
-		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"endl;
+		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"<<endl;
 	}
 	else {
 		PC += 4;
