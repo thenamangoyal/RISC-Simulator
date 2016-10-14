@@ -84,11 +84,11 @@ void Core::fetch_end() {
 	cout<<endl;
 	if (isBranchTaken){
 		PC = branchPC;
-		cout<<"Updating PC to branchPC i.e. 0x"<<hex<<PC<<endl;
+		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"endl;
 	}
 	else {
 		PC += 4;
-		cout<<"Updating PC to PC + 4 i.e. 0x"<<hex<<PC<<endl;
+		cout<<"New PC = 0x"<<hex<<PC<<" (PC + 4)"<<endl;
 	}
 	cout<<endl;
 }
@@ -329,25 +329,25 @@ void Core::decode() {
 	unsigned int rs1 = inst_bitset(instruction_word, 19,22);
 	unsigned int rs2 = inst_bitset(instruction_word, 15,18);
 
-	cout<<endl<<"rd: R"<<dec<<rd<<" rs1: R"<<dec<<rs1<<" rs2: R"<<dec<<rs2<<endl;
+	cout<<endl<<"rd: R"<<dec<<rd<<", rs1: R"<<dec<<rs1<<", rs2: R"<<dec<<rs2<<endl;
 
 	if (isRet){
 		operand1 = R[15];
-		cout<<"Operand1: "<<dec<<operand1<<" (ra OR R15)"<<endl;
+		cout<<"Operand1: "<<dec<<operand1<<" (Read from ra OR R15)"<<endl;
 	}
 	else{
 		operand1 = R[rs1];
-		cout<<"Operand1: "<<dec<<operand1<<" (rs1)"<<endl;
+		cout<<"Operand1: "<<dec<<operand1<<" (Read from rs1)"<<endl;
 	}
 	
 
 	if (isSt){
 		operand2 = R[rd];
-		cout<<"Operand2: "<<dec<<operand2<<" (rd)"<<endl;
+		cout<<"Operand2: "<<dec<<operand2<<" (Read from rd)"<<endl;
 	}
 	else{
 		operand2 = R[rs2];
-		cout<<"Operand2: "<<dec<<operand2<<" (rs2)"<<endl;
+		cout<<"Operand2: "<<dec<<operand2<<" (Read from rs2)"<<endl;
 	}
 
 }
@@ -528,27 +528,26 @@ void Core::write_back() {
 	if (isWb){
 
 		if (isLd){
-			cout<<"Since LD inst, data to write is ldResult"<<endl;
 			result = ldResult;
+			cout<<"Writing data "<<dec<<result<<" (ldResult)";
 		}
 		else if (isCall){
-			cout<<"Since CALL inst, data to write is PC + 4"<<endl;
 			result = PC + 4;
+			cout<<"Writing data "<<dec<<result<<" (PC + 4)";
 		}
 		else {
-			cout<<"Data to write is aluResult"<<endl;
 			result = aluResult;
+			cout<<"Writing data "<<dec<<result<<" (aluResult)";
 		}
 
-		if (isCall){
-			cout<<"Since CALL inst, register is ra i.e R15"<<endl;
+		if (isCall){			
 			addr = 15;
 		}
 		else {
 			addr = inst_bitset(instruction_word,23,26);
 		}
 	
-		cout<<"Writing data "<<dec<<result<<" to register R"<<dec<<addr<<endl;
+		cout<<" to register R"<<dec<<addr<<endl;
 		R[addr] = result;
 
 	}
