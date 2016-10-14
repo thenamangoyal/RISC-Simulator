@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	if (argc<0){
+	if (argc<2){
 		cout<<"Please provide Instruction MEM file as an argument"<<endl;
 		return 1;
 	}
@@ -19,11 +19,16 @@ int main(int argc, char *argv[])
 
 	simulator.reset_proc();
 
+	simulator.fetch();
+	simulator.decode();
 
 
-    Memory mem_Block(12);
+	simulator.write_data_memory();
+
+
+    /*Memory mem_Block(12);
     mem_Block.Write(0,5);
     mem_Block.Write(4,-10);
-    cout<<(signed int)mem_Block.Read(4)<<endl;
+    cout<<(signed int)mem_Block.Read(4)<<endl;*/
     return 0;
 }

@@ -1,15 +1,17 @@
 #ifndef CORE_H
 #define CORE_H
-#define MEM_CAPAPCITY 10000
+
 
 #include <iostream>
-#include <ifstream>
+#include <fstream>
 #include <sstream>
 #include <string>
+#include <bitset>
 #include <climits>
 
 #include "Memory.h"
 
+const unsigned int MEM_CAPACITY  = 100;
 
 class Core
 {
@@ -29,7 +31,7 @@ class Core
 		//executes the ALU operation based on ALUop
 		void execute();
 		//perform the memory operation
-		void mem();
+		void mem_access();
 		//writes the results back to register file
 		void write_back();
 
@@ -42,11 +44,38 @@ class Core
         unsigned int instruction_word;
 		unsigned int operand1;
 		unsigned int operand2;
-		Memory MEM(MEM_CAPAPCITY);
+		Memory* MEM;
 		unsigned int INST_MAX;
+
+		bool isSt;
+		bool isLd;
+		bool isBeq;
+		bool isBgt;
+		bool isRet;
+		bool isImmediate;
+		bool isWb;
+		bool isUbranch;
+		bool isCall;
+		bool isAdd;
+		bool isSub;
+		bool isCmp;
+		bool isMul;
+		bool isDiv;
+		bool isMod;
+		bool isLsl;
+		bool isLsr;
+		bool isAsr;
+		bool inOr;
+		bool isAnd;
+		bool isNot;
+		bool isMov;
+
+
 
 	private:
 		unsigned int mem_address(unsigned int data_address);
+		unsigned int inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end);
 };
+
 
 #endif // CORE_H

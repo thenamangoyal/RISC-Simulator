@@ -28,5 +28,5 @@ void Memory::Write(unsigned int address, unsigned int data)
 
 Memory::~Memory()
 {
-    //dtor
+    delete [] start_Add;
 }
