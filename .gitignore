@@ -28,7 +28,7 @@
 *.out
 *.app
 
-*.s
 sim
-out
+output
 DATA_OUT.mem
+STATE_OUT.mem

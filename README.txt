@@ -5,7 +5,7 @@ SimpleRISC Functional Simulator
 The project simulates SimpleRISC functional processor using C++.
 
 
-To compile and run the code in linux follow the follwing steps.
+To compile and run the code in linux follow the follwing steps in the home directory of project folder.
 
 *To compile execute the following command in terminal
 make
