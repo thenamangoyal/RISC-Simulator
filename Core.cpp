@@ -59,6 +59,7 @@ void Core::write_data_memory() {
 	out_file.close();
 }
 
+void Core::write_state() {
 	ofstream out_file;
 	out_file.open("STATE_OUT.mem",ios::out | ios::trunc);
 
