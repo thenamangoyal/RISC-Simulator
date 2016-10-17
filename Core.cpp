@@ -80,7 +80,7 @@ void Core::write_state() {
 		out_file<<"Flags.eq : False"<<endl;
 	}
 
-	if (eq){
+	if (gt){
 		out_file<<"Flags.gt : True"<<endl;
 	}
 	else {
