@@ -11,10 +11,10 @@ To compile and run the code in linux follow the follwing steps.
 make
 
 *To run the program
-./sim TestCases/<INPUT MEM FILE>
+./sim test/<INPUT MEM FILE>
 
 *To export the result for a test file eg. array_sum.mem
-./sim TestCases/array_sum.mem>output
+./sim test/array_sum.mem>output
 
 
 The code generates a DATA_OUT.mem i.e. the complete memory at the termination of program.
