@@ -16,8 +16,11 @@ make
 *To export the result for a test file eg. array_sum.mem
 ./sim test/array_sum.mem>output
 
+*To clean compiled code
+make clean
 
-The code generates a DATA_OUT.mem i.e. the complete memory at the termination of program.
+The code generates a DATA_OUT.mem i.e. the complete memory at the termination of program 
+and a STATE_OUT.mem i.e. complete state of processor at the termination of program.
 
 The output contains instruction by instruction work done in each cycle in all stages namely -
 

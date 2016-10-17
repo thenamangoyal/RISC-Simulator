@@ -1,6 +1,6 @@
 #mov r1, 4
 0x0 0x4C400004
-# mov r2, 12
+#mov r2, 12
 0x4 0x4C80000C
 #add r3, r1, r2
 0x8 0x00C48000
