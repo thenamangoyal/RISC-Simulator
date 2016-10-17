@@ -59,6 +59,35 @@ void Core::write_data_memory() {
 	out_file.close();
 }
 
+	ofstream out_file;
+	out_file.open("STATE_OUT.mem",ios::out | ios::trunc);
+
+	out_file<<"Registers"<<endl<<endl;
+
+	for(int i=0; i<16; i++){
+		out_file<<"R"<<dec<<i<<" : "<<dec<<R[i]<<endl;
+	}
+
+	out_file<<endl;
+	out_file<<"PC : 0x"<<hex<<PC<<endl;
+	out_file<<endl;
+
+	if (eq){
+		out_file<<"Flags.eq : True"<<endl;
+	}
+	else {
+		out_file<<"Flags.eq : False"<<endl;
+	}
+
+	if (eq){
+		out_file<<"Flags.gt : True"<<endl;
+	}
+	else {
+		out_file<<"Flags.gt : False"<<endl;
+	}
+  	
+	out_file.close();
+}
 
 void Core::reset_proc()
 {

@@ -23,5 +23,7 @@ int main(int argc, char *argv[])
 
 	simulator.write_data_memory();
 
+	simulator.write_state();
+
     return 0;
 }

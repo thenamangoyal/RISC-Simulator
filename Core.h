@@ -23,6 +23,7 @@ class Core
 		void reset_proc();
 		void load_program_memory(const char* file_name);
 		void write_data_memory();
+		void write_state();
 
 		//reads from the instruction memory
 		void fetch_begin();
