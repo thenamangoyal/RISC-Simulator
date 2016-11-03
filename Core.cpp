@@ -147,18 +147,42 @@ void Core::run_simplesim(){
 		isDataDependency = detect_data_dependency();
 		isControlDependency = detect_control_dependency();
 
-		PC->clock();
-		if_of->clock();
-		of_ex->clock();
-		ex_ma->clock();
-		ma_rw->clock();
+		if (!isDataDependency && !isControlDependency){
 
-		if(isDataDependency){
-			cout<<"Data Dependency"<<endl;
+			PC->clock();
+			if_of->clock();
+			of_ex->clock();
+			ex_ma->clock();
+			ma_rw->clock();
+
 		}
-		if(isControlDependency){
-			cout<<"Control Dependency"<<endl;
-		}		
+		else if (isDataDependency && !isControlDependency){
+			cout<<endl<<"Data Dependency"<<endl;
+			of_ex->bubble->Write(true);
+			of_ex->bubble->clock();
+
+			ex_ma->clock();
+			ma_rw->clock();
+
+		}
+		else if (!isDataDependency && isControlDependency){
+			cout<<endl<<"Control Dependency"<<endl;
+			PC->clock();
+
+			if_of->bubble->Write(true);
+			if_of->bubble->clock();
+
+			of_ex->bubble->Write(true);		
+			of_ex->bubble->clock();
+
+			ex_ma->clock();
+			ma_rw->clock();
+		}
+		else {
+
+		}
+
+		cout<<endl<<"New PC = 0x"<<hex<<PC->Read()<<endl;
 
 		counter++;
 	}
@@ -187,17 +211,12 @@ void Core::fetch_end() {
 
 	unsigned int temp_PC = PC->Read();
 
-	cout<<endl;
 	if (isBranchTaken){
 		PC->Write(branchPC);
-		cout<<"New PC = 0x"<<hex<<branchPC<<" (branchPC)"<<endl;
 	}
-	else {
-		
-		PC->Write(temp_PC + 4);
-		cout<<"New PC = 0x"<<hex<<(temp_PC + 4)<<" (PC + 4)"<<endl;
+	else {		
+		PC->Write(temp_PC + 4);		
 	}
-	cout<<endl;
 
 }
 
