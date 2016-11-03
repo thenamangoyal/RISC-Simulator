@@ -1,6 +1,6 @@
 #include "PipelineRegister.h"
 
-Pipeline_Register::Pipeline_Register(bool pipe){
+PipelineRegister::PipelineRegister(bool pipe){
 	PC = new Register<unsigned int>(pipe);
 	instruction_word = new Register<unsigned int>(pipe);
 	branchtTarget = new Register<unsigned int>(pipe);
@@ -34,7 +34,7 @@ Pipeline_Register::Pipeline_Register(bool pipe){
 	isMov = new Register<bool>(pipe);
 }
 
-Pipeline_Register::~Pipeline_Register(){
+PipelineRegister::~PipelineRegister(){
 	delete PC;
 	delete instruction_word;
 	delete branchtTarget;
@@ -68,7 +68,7 @@ Pipeline_Register::~Pipeline_Register(){
 	delete isMov;
 }
 
-Pipeline_Register& Pipeline_Register::operator=(const Pipeline_Register& r){
+PipelineRegister& PipelineRegister::operator=(const PipelineRegister& r){
 	PC = r.PC;
 	instruction_word = r.instruction_word;
 	branchtTarget = r.branchtTarget;
@@ -102,7 +102,7 @@ Pipeline_Register& Pipeline_Register::operator=(const Pipeline_Register& r){
 	isMov = r.isMov;
 }
 
-void Pipeline_Register::clock(){
+void PipelineRegister::clock(){
 	PC->clock();
 	instruction_word->clock();
 	branchtTarget->clock();

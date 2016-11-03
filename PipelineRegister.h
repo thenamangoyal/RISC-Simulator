@@ -3,7 +3,7 @@
 
 #include "Register.h"
 
-class Pipeline_Register {
+class PipelineRegister {
 public:
 	Register<unsigned int>* PC;
 	Register<unsigned int>* instruction_word;
@@ -37,10 +37,10 @@ public:
 	Register<bool>* isNot;
 	Register<bool>* isMov;
 public:
-	Pipeline_Register(bool pipe);
-	~Pipeline_Register();
+	PipelineRegister(bool pipe);
+	~PipelineRegister();
 	void clock();
-	Pipeline_Register& operator=(const Pipeline_Register& r);
+	PipelineRegister& operator=(const PipelineRegister& r);
 };
 
 #endif
