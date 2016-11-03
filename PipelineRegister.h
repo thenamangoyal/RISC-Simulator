@@ -5,6 +5,8 @@
 
 class PipelineRegister {
 public:
+	Register<bool>* bubble;
+
 	Register<unsigned int>* PC;
 	Register<unsigned int>* instruction_word;
 	Register<unsigned int>* branchTarget;

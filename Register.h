@@ -16,6 +16,7 @@ public:
 
 template <typename T>
 Register<T>::Register(bool pipe){
+	in = 0;
 	out = 0;
 	pipeline = pipe;
 }

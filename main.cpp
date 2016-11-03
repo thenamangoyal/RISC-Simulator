@@ -24,13 +24,6 @@ int main(int argc, char *argv[])
 
 	}
 
-	if (to_pipeline) {
-		cout<<"Pipeline Based"<<endl;
-	}
-	else {
-		cout<<"Single Cycle Based"<<endl;
-	}
-
 	Core simulator(to_pipeline);
 
 	simulator.load_program_memory(argv[1]);
