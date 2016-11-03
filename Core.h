@@ -61,9 +61,11 @@ class Core
 
 	private:
 		unsigned int mem_address(unsigned int data_address);
-		unsigned int inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end);
-		bool check_data_dependency(PipelineRegister* A, PipelineRegister* B);
-		void fix_control_dependency();
+		unsigned int inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end);		
+		bool check_data_conflict(PipelineRegister* A, PipelineRegister* B);
+
+		bool detect_data_dependency();
+		bool detect_control_dependency();
 };
 
 

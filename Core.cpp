@@ -128,21 +128,15 @@ void Core::run_simplesim(){
 		cout<<"Single Cycle Based"<<endl;
 	}
 
+	bool isDataDependency;
+	bool isControlDependency;
+
 	int counter = 0;
 	while (PC->Read() != INST_MAX){
 		cout<<"========================"<<endl;
 		cout<<"CYCLE "<<dec<<counter+1<<endl;
 		cout<<"========================"<<endl;
-		if (check_data_dependency(if_of, of_ex)){
-			cout<<"Data Dependency between DECODE and EXECUTE"<<endl;
-		}
-		if (check_data_dependency(if_of, ex_ma)){
-			cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
-		}
-		if (check_data_dependency(if_of, ma_rw)){
-			cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
-		}
-		fix_control_dependency();
+
 		fetch_begin();
 		decode();
 		execute();
@@ -150,11 +144,21 @@ void Core::run_simplesim(){
 		write_back();
 		fetch_end();
 
+		isDataDependency = detect_data_dependency();
+		isControlDependency = detect_control_dependency();
+
 		PC->clock();
 		if_of->clock();
 		of_ex->clock();
 		ex_ma->clock();
 		ma_rw->clock();
+
+		if(isDataDependency){
+			cout<<"Data Dependency"<<endl;
+		}
+		if(isControlDependency){
+			cout<<"Control Dependency"<<endl;
+		}		
 
 		counter++;
 	}
@@ -555,6 +559,7 @@ void Core::execute() {
 	if (bubble_inst){
 		cout<<"Pipeline bubble instruction"<<endl;
 		isBranchTaken = false;
+		branchPC = 0x0;
 	}
 	else {
 	
@@ -932,7 +937,7 @@ unsigned int Core::inst_bitset(unsigned int inst_word, unsigned int start, unsig
 	return inst_word;
 }
 
-bool Core::check_data_dependency(PipelineRegister* A, PipelineRegister* B){
+bool Core::check_data_conflict(PipelineRegister* A, PipelineRegister* B){
 	unsigned int A_instruction_word = A->instruction_word->Read();
 
 	unsigned int A_opcode1 = inst_bitset(A_instruction_word, 28, 28);
@@ -1043,12 +1048,30 @@ bool Core::check_data_dependency(PipelineRegister* A, PipelineRegister* B){
 	return false;
 }
 
-void Core::fix_control_dependency(){
-	if (pipeline && isBranchTaken){
-		cout<<"Control Dependency (isBranchTaken) so bubbling instructions in DECODE and EXECUTE"<<endl;
-		if_of->bubble->Write(true);
-		of_ex->bubble->Write(true);
-		if_of->bubble->clock();
-		of_ex->bubble->clock();
+bool Core::detect_data_dependency(){
+
+	bool isDataDependency = false;
+
+	if (pipeline){		
+		if (check_data_conflict(if_of, of_ex)){
+			//cout<<"Data Dependency between DECODE and EXECUTE"<<endl;
+			isDataDependency = true;
+		}
+		else if (check_data_conflict(if_of, ex_ma)){
+			//cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			isDataDependency = true;
+		}
+		else if (check_data_conflict(if_of, ma_rw)){
+			//cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			isDataDependency = true;
+		}
 	}
+
+	return isDataDependency;
+
+}
+
+bool Core::detect_control_dependency(){
+
+	return (pipeline && isBranchTaken);	
 }
