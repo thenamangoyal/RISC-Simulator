@@ -96,11 +96,12 @@ void Core::run_simplesim(){
 		cout<<"========================"<<endl;
 		cout<<"CYCLE "<<dec<<counter+1<<endl;
 		cout<<"========================"<<endl;
-		fetch();
+		fetch_begin();
 		decode();
 		execute();
 		mem_access();
 		write_back();
+		fetch_end();
 
 		PC->clock();
 		if_of->clock();
@@ -126,7 +127,7 @@ void Core::reset_proc()
 }
 
 //reads from the instruction memory
-void Core::fetch() {
+void Core::fetch_begin() {
 	cout<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 	unsigned int temp_instruction_word = MEM->Read(PC->Read());	
 	cout<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<PC->Read()<<endl;
@@ -135,6 +136,21 @@ void Core::fetch() {
 	if_of->PC->Write() = PC->Read();
 	if_of->instruction_word->Write() = temp_instruction_word;
 	
+}
+
+
+//updates the instruction register
+void Core::fetch_end() {
+	cout<<endl;
+	if (isBranchTaken){
+		PC = branchPC;
+		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"<<endl;
+	}
+	else {
+		PC += 4;
+		cout<<"New PC = 0x"<<hex<<PC<<" (PC + 4)"<<endl;
+	}
+	cout<<endl;
 }
 
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
@@ -504,18 +520,6 @@ void Core::execute() {
 		isBranchTaken = false;
 		cout<<"isBranchTaken: False"<<endl;
 	}
-
-	//updates the instruction register
-	cout<<endl;
-	if (isBranchTaken){
-		PC = branchPC;
-		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"<<endl;
-	}
-	else {
-		PC += 4;
-		cout<<"New PC = 0x"<<hex<<PC<<" (PC + 4)"<<endl;
-	}
-	cout<<endl;
 
 
 	//////////   ALU  ///////////
