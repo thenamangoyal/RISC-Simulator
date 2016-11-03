@@ -151,12 +151,12 @@ void Core::fetch_end() {
 	cout<<endl;
 	if (isBranchTaken){
 		PC->Write(branchPC);
-		cout<<"New PC = 0x"<<hex<<PC->Read()<<" (branchPC)"<<endl;
+		cout<<"New PC = 0x"<<hex<<branchPC<<" (branchPC)"<<endl;
 	}
 	else {
 		
 		PC->Write(temp_PC + 4);
-		cout<<"New PC = 0x"<<hex<<PC->Read()<<" (PC + 4)"<<endl;
+		cout<<"New PC = 0x"<<hex<<(temp_PC + 4)<<" (PC + 4)"<<endl;
 	}
 	cout<<endl;
 }
