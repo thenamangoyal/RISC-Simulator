@@ -145,18 +145,18 @@ void Core::fetch_begin() {
 
 //updates the instruction register
 void Core::fetch_end() {
-	
+
 	unsigned int temp_PC = PC->Read();
 
 	cout<<endl;
 	if (isBranchTaken){
 		PC->Write(branchPC);
-		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"<<endl;
+		cout<<"New PC = 0x"<<hex<<PC->Read()<<" (branchPC)"<<endl;
 	}
 	else {
 		
 		PC->Write(temp_PC + 4);
-		cout<<"New PC = 0x"<<hex<<PC<<" (PC + 4)"<<endl;
+		cout<<"New PC = 0x"<<hex<<PC->Read()<<" (PC + 4)"<<endl;
 	}
 	cout<<endl;
 }
