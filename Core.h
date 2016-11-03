@@ -30,7 +30,7 @@ class Core
 		//reads from the instruction memory
 		void fetch_begin();
 		//updates the instruction register
-		void fetch_end()
+		void fetch_end();
 		//reads the instruction register, reads operand1, operand2 from register file, decides the operation to be performed in execute stage
 		void decode();
 		//executes the ALU operation based on ALUop
@@ -52,7 +52,7 @@ class Core
 		PipelineRegister* ex_ma;
 		PipelineRegister* ma_rw;
 
-		Regsiter<unsigned int>* PC;
+		Register<unsigned int>* PC;
         unsigned int R[16];        
         bool eq, gt;
         bool isBranchTaken;

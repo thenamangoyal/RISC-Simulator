@@ -3,7 +3,7 @@
 PipelineRegister::PipelineRegister(bool pipe){
 	PC = new Register<unsigned int>(pipe);
 	instruction_word = new Register<unsigned int>(pipe);
-	branchtTarget = new Register<unsigned int>(pipe);
+	branchTarget = new Register<unsigned int>(pipe);
 	A = new Register<unsigned int>(pipe);
 	B = new Register<unsigned int>(pipe);
 	operand2 = new Register<unsigned int>(pipe);
@@ -37,7 +37,7 @@ PipelineRegister::PipelineRegister(bool pipe){
 PipelineRegister::~PipelineRegister(){
 	delete PC;
 	delete instruction_word;
-	delete branchtTarget;
+	delete branchTarget;
 	delete A;
 	delete B;
 	delete operand2;
@@ -71,7 +71,7 @@ PipelineRegister::~PipelineRegister(){
 PipelineRegister& PipelineRegister::operator=(const PipelineRegister& r){
 	PC = r.PC;
 	instruction_word = r.instruction_word;
-	branchtTarget = r.branchtTarget;
+	branchTarget = r.branchTarget;
 	A = r.A;
 	B = r.B;
 	operand2 = r.operand2;
@@ -105,7 +105,7 @@ PipelineRegister& PipelineRegister::operator=(const PipelineRegister& r){
 void PipelineRegister::clock(){
 	PC->clock();
 	instruction_word->clock();
-	branchtTarget->clock();
+	branchTarget->clock();
 	A->clock();
 	B->clock();
 	operand2->clock();

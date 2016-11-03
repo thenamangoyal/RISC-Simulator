@@ -131,27 +131,31 @@ void Core::reset_proc()
 void Core::fetch_begin() {
 	cout<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 
+	unsigned int temp_PC = PC->Read();
 	unsigned int temp_instruction_word = MEM->Read(PC->Read());	
 
-	cout<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<PC->Read()<<endl;
+	cout<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
 	//cout<<bitset<32> (temp_instruction_word)<<" : Instruction encoding"<<endl;
 
-	if_of->PC->Write() = PC->Read();
-	if_of->instruction_word->Write() = temp_instruction_word;
+	if_of->PC->Write(temp_PC);
+	if_of->instruction_word->Write(temp_instruction_word);
 	
 }
 
 
 //updates the instruction register
 void Core::fetch_end() {
+	
+	unsigned int temp_PC = PC->Read();
+
 	cout<<endl;
 	if (isBranchTaken){
 		PC->Write(branchPC);
 		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"<<endl;
 	}
 	else {
-		unsigned int oldPC = PC->Read();
-		PC->Write(oldPC + 4);
+		
+		PC->Write(temp_PC + 4);
 		cout<<"New PC = 0x"<<hex<<PC<<" (PC + 4)"<<endl;
 	}
 	cout<<endl;

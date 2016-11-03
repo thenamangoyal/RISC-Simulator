@@ -7,7 +7,7 @@ class PipelineRegister {
 public:
 	Register<unsigned int>* PC;
 	Register<unsigned int>* instruction_word;
-	Register<unsigned int>* branchtTarget;
+	Register<unsigned int>* branchTarget;
 	Register<unsigned int>* A;
 	Register<unsigned int>* B;
 	Register<unsigned int>* operand2;
