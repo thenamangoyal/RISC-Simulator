@@ -20,17 +20,15 @@ class Core
     public:
     	Core(bool pipe = false);
     	~Core();
-
-        void run_simplesim();
+        
 		void reset_proc();
 		void load_program_memory(const char* file_name);
 		void write_data_memory();
 		void write_state();
+		void run_simplesim();
 
-		//reads from the instruction memory
-		void fetch_begin();
-		//updates the instruction register
-		void fetch_end();
+		//reads from the instruction memory and updates the PC register
+		void fetch();
 		//reads the instruction register, reads operand1, operand2 from register file, decides the operation to be performed in execute stage
 		void decode();
 		//executes the ALU operation based on ALUop

@@ -22,21 +22,6 @@ Core::~Core(){
 	delete ma_rw;
 }
 
-void Core::run_simplesim(){
-	int counter = 0;
-	while (PC != INST_MAX){
-		cout<<"========================"<<endl;
-		cout<<"INSTRUNCTION "<<dec<<counter+1<<endl;
-		cout<<"========================"<<endl;
-		fetch_begin();
-		decode();
-		execute();
-		mem_access();
-		write_back();
-		fetch_end();
-		counter++;
-	}
-}
 
 void Core::load_program_memory(const char* file_name){
 	ifstream inst_file;
@@ -100,6 +85,28 @@ void Core::write_state() {
 	out_file.close();
 }
 
+void Core::run_simplesim(){
+	int counter = 0;
+	while (PC != INST_MAX){
+		cout<<"========================"<<endl;
+		cout<<"CYCLE "<<dec<<counter+1<<endl;
+		cout<<"========================"<<endl;
+		fetch();
+		decode();
+		execute();
+		mem_access();
+		write_back();
+
+		if_of->clock();
+		of_ex->clock();
+		ex_ma->clock();
+		ma_rw->clock();
+
+		counter++;
+	}
+}
+
+
 void Core::reset_proc()
 {
 	for(int i=0;i<16;i++)
@@ -112,16 +119,14 @@ void Core::reset_proc()
 	gt = false;
 }
 
-//reads from the instruction memory
-void Core::fetch_begin() {
+//reads from the instruction memory and updates the PC register
+void Core::fetch() {
 	cout<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 	instruction_word = MEM->Read(PC);	
 	cout<<"Instruction 0x"<<hex<<instruction_word<<" read at address 0x"<<hex<<PC<<endl;
 	//cout<<bitset<32> (instruction_word)<<" : Instruction encoding"<<endl;
-}
 
-//updates the instruction register
-void Core::fetch_end() {
+	//updates the instruction register
 	cout<<endl;
 	if (isBranchTaken){
 		PC = branchPC;
