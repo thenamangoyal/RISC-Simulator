@@ -55,6 +55,8 @@ class Core
 		Regsiter<unsigned int>* PC;
         unsigned int R[16];        
         bool eq, gt;
+        bool isBranchTaken;
+        unsigned int branchPC;
 
 
 	private:

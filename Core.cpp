@@ -60,7 +60,7 @@ void Core::write_data_memory() {
 }
 
 void Core::write_state() {
-	/*ofstream out_file;
+	ofstream out_file;
 	out_file.open("STATE_OUT.mem",ios::out | ios::trunc);
 
 	out_file<<"Registers"<<endl<<endl;
@@ -70,7 +70,7 @@ void Core::write_state() {
 	}
 
 	out_file<<endl;
-	out_file<<"PC : 0x"<<hex<<PC<<endl;
+	out_file<<"PC : 0x"<<hex<<PC->Read()<<endl;
 	out_file<<endl;
 
 	if (eq){
@@ -87,7 +87,7 @@ void Core::write_state() {
 		out_file<<"Flags.gt : False"<<endl;
 	}
   	
-	out_file.close();*/
+	out_file.close();
 }
 
 void Core::run_simplesim(){
@@ -121,7 +121,8 @@ void Core::reset_proc()
 		R[i] = 0;
 	}
 	R[14] = MEM_CAPACITY - INST_MAX; // Stack Pointer initialize
-	PC = 0;
+	PC->Write(0);
+	PC->clock();
 	eq = false;
 	gt = false;
 }
@@ -129,9 +130,11 @@ void Core::reset_proc()
 //reads from the instruction memory
 void Core::fetch_begin() {
 	cout<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
+
 	unsigned int temp_instruction_word = MEM->Read(PC->Read());	
+
 	cout<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<PC->Read()<<endl;
-	//cout<<bitset<32> (instruction_word)<<" : Instruction encoding"<<endl;
+	//cout<<bitset<32> (temp_instruction_word)<<" : Instruction encoding"<<endl;
 
 	if_of->PC->Write() = PC->Read();
 	if_of->instruction_word->Write() = temp_instruction_word;
@@ -143,11 +146,12 @@ void Core::fetch_begin() {
 void Core::fetch_end() {
 	cout<<endl;
 	if (isBranchTaken){
-		PC = branchPC;
+		PC->Write(branchPC);
 		cout<<"New PC = 0x"<<hex<<PC<<" (branchPC)"<<endl;
 	}
 	else {
-		PC += 4;
+		unsigned int oldPC = PC->Read();
+		PC->Write(oldPC + 4);
 		cout<<"New PC = 0x"<<hex<<PC<<" (PC + 4)"<<endl;
 	}
 	cout<<endl;
@@ -156,11 +160,13 @@ void Core::fetch_end() {
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
 void Core::decode() {
 	cout<<endl<<"!--------- DECODE ---------!"<<endl<<endl;
-	unsigned int temp_instruction_word = if_of->instruction_word->Read();
+	
 	unsigned int temp_PC = if_of->PC->Read();
+	unsigned int temp_instruction_word = if_of->instruction_word->Read();
 
 	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
+	bool temp_isSt;
 	bool temp_isLd;
 	bool temp_isBeq;
 	bool temp_isBgt;
@@ -492,27 +498,62 @@ void Core::decode() {
 //executes the ALU operation based on ALUop
 void Core::execute() {
 	cout<<endl<<"!--------- EXECUTE ---------!"<<endl<<endl;
+	
+	unsigned int temp_PC = of_ex->PC->Read();
+	unsigned int temp_instruction_word = of_ex->instruction_word->Read();
+
+	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
+	unsigned int temp_branchTarget = of_ex->branchTarget->Read();
+
+	unsigned int temp_A = of_ex->A->Read();	
+	unsigned int temp_B = of_ex->B->Read();
+	unsigned int temp_operand2 = of_ex->operand2->Read();
+
+	bool temp_isSt = of_ex->isSt->Read();
+	bool temp_isLd = of_ex->isLd->Read();
+	bool temp_isBeq = of_ex->isBeq->Read();
+	bool temp_isBgt = of_ex->isBgt->Read();
+	bool temp_isRet = of_ex->isRet->Read();
+	bool temp_isImmediate = of_ex->isImmediate->Read();
+	bool temp_isWb = of_ex->isWb->Read();
+	bool temp_isUbranch = of_ex->isUbranch->Read();
+	bool temp_isCall = of_ex->isCall->Read();
+	bool temp_isAdd = of_ex->isAdd->Read();
+	bool temp_isSub = of_ex->isSub->Read();
+	bool temp_isCmp = of_ex->isCmp->Read();
+	bool temp_isMul = of_ex->isMul->Read();
+	bool temp_isDiv = of_ex->isDiv->Read();
+	bool temp_isMod = of_ex->isMod->Read();
+	bool temp_isLsl = of_ex->isLsl->Read();
+	bool temp_isLsr = of_ex->isLsr->Read();
+	bool temp_isAsr = of_ex->isAsr->Read();
+	bool temp_isOr = of_ex->isOr->Read();
+	bool temp_isAnd = of_ex->isAnd->Read();
+	bool temp_isNot = of_ex->isNot->Read();
+	bool temp_isMov = of_ex->isMov->Read();
+
 	//////////   Branch Unit  ///////////
 	cout<<"*** Branch Unit"<<endl;
-	if (isRet){
-		branchPC = operand1;
+	if (temp_isRet){
+		branchPC = temp_A;
 		cout<<"branchPC: 0x"<<hex<<branchPC<<" (operand1)"<<endl;
 	}
 	else{
-		branchPC = branchTarget;
+		branchPC = temp_branchTarget;
 		cout<<"branchPC: 0x"<<hex<<branchPC<<" (branchTarget)"<<endl;
 	}
 	
 
-	if (isUbranch){
+	if (temp_isUbranch){
 		isBranchTaken = true;
 		cout<<"isBranchTaken: True"<<endl;
 	}
-	else if(isBeq && eq) {
+	else if(temp_isBeq && eq) {
 		isBranchTaken = true;
 		cout<<"isBranchTaken: True"<<endl;
 	}
-	else if(isBgt && gt){
+	else if(temp_isBgt && gt){
 		isBranchTaken = true;
 		cout<<"isBranchTaken: True"<<endl;
 	}
@@ -526,40 +567,30 @@ void Core::execute() {
 
 	cout<<endl<<"*** ALU"<<endl;
 
-	unsigned int A;
-	unsigned int B;
+	unsigned int temp_aluResult;
+
 	
-	A = operand1;
-	cout<<"A: "<<dec<<A<<endl;
-
-	if (isImmediate){
-		B = immx;
-		cout<<"B: "<<dec<<B<<" (immx)"<<endl;
-	}
-	else {
-		B = operand2;
-		cout<<"B: "<<dec<<B<<" (operand2)"<<endl;
-	}
-	
+	cout<<"A: "<<dec<<temp_A<<endl;
+	cout<<"B: "<<dec<<temp_B<<endl;
 
 
-	if (isAdd){
+	if (temp_isAdd){
 		cout<<"ADD operation"<<endl;
-		aluResult = A + B;
+		temp_aluResult = temp_A + temp_B;
 		
 	}
-	if (isSub){		
+	if (temp_isSub){		
 		cout<<"SUB operation"<<endl;
-		aluResult = A + (~B) + 1;
+		temp_aluResult = temp_A + (~temp_B) + 1;
 	}
-	if (isCmp){
+	if (temp_isCmp){
 		cout<<"CMP operation"<<endl;
-		if (A +(~B)+1  == 0){
+		if (temp_A +(~temp_B)+1  == 0){
 			eq = true;
 			gt = false;
 			cout<<"Equal"<<endl;
 		}
-		else if (inst_bitset(A+(~B)+1,32,32)   == 0){
+		else if (inst_bitset(temp_A+(~temp_B)+1,32,32)   == 0){
 			gt = true;
 			eq = false;
 			cout<<"Greator than"<<endl;
@@ -571,123 +602,240 @@ void Core::execute() {
 		
 	}
 
-	if (isMul){
+	if (temp_isMul){
 		cout<<"MUL operation"<<endl;
-		aluResult = A * B;
+		temp_aluResult = temp_A * temp_B;
 	}
 
-	if (isDiv){
+	if (temp_isDiv){
 		cout<<"DIV operation"<<endl;
-		aluResult = A / B;
+		temp_aluResult = temp_A / temp_B;
 	}
 
-	if (isMod){
+	if (temp_isMod){
 		cout<<"MOD operation"<<endl;
-		aluResult = A % B;
+		temp_aluResult = temp_A % temp_B;
 	}
 
-	if (isLsl){
+	if (temp_isLsl){
 		cout<<"LSL operation"<<endl;
-		aluResult = A << B;
+		temp_aluResult = temp_A << temp_B;
 	}
 
-	if (isLsr){
+	if (temp_isLsr){
 		cout<<"LSR operation"<<endl;
-		aluResult = A >> B;
+		temp_aluResult = temp_A >> temp_B;
 	}
 
-	if (isAsr){
+	if (temp_isAsr){
 		cout<<"ASR operation"<<endl;
-		aluResult = A;
-		unsigned int count = B;
+		temp_aluResult = temp_A;
+		unsigned int count = temp_B;
 		while(count){
-			if (aluResult>>31 == 1){
-				aluResult>>1;
-				aluResult = aluResult | 0x80000000;
+			if (temp_aluResult>>31 == 1){
+				temp_aluResult>>1;
+				temp_aluResult = temp_aluResult | 0x80000000;
 			}
 			else{
-				aluResult>>1;
+				temp_aluResult>>1;
 			}		
 
 			count--;
 		}
 	}
 
-	if (isOr){
+	if (temp_isOr){
 		cout<<"OR operation"<<endl;
-		aluResult = A | B;
+		temp_aluResult = temp_A | temp_B;
 	}
 
-	if (isNot){
+	if (temp_isNot){
 		cout<<"NOT operation"<<endl;
-		aluResult = ~B;
+		temp_aluResult = ~temp_B;
 	}
 
-	if (isAnd){
+	if (temp_isAnd){
 		cout<<"AND operation"<<endl;
-		aluResult = A & B;
+		temp_aluResult = temp_A & temp_B;
 	}
 
-	if (isMov){
+	if (temp_isMov){
 		cout<<"MOV operation"<<endl;
-		aluResult = B;
+		temp_aluResult = temp_B;
 	}
 
-	cout<<"aluResult: "<<dec<<aluResult<<" (0x"<<hex<<aluResult<<")"<<endl;
+	cout<<"aluResult: "<<dec<<temp_aluResult<<" (0x"<<hex<<temp_aluResult<<")"<<endl;
 
+	ex_ma->PC->Write(temp_PC);
+	ex_ma->instruction_word->Write(temp_instruction_word);
 
+	ex_ma->aluResult->Write(temp_aluResult);
+	ex_ma->operand2->Write(temp_operand2);
 
+	ex_ma->isSt->Write(temp_isSt);
+	ex_ma->isLd->Write(temp_isLd);
+	ex_ma->isBeq->Write(temp_isBeq);
+	ex_ma->isBgt->Write(temp_isBgt);
+	ex_ma->isRet->Write(temp_isRet);
+	ex_ma->isImmediate->Write(temp_isImmediate);
+	ex_ma->isWb->Write(temp_isWb);
+	ex_ma->isUbranch->Write(temp_isUbranch);
+	ex_ma->isCall->Write(temp_isCall);
+	ex_ma->isAdd->Write(temp_isAdd);
+	ex_ma->isSub->Write(temp_isSub);
+	ex_ma->isCmp->Write(temp_isCmp);
+	ex_ma->isMul->Write(temp_isMul);
+	ex_ma->isDiv->Write(temp_isDiv);
+	ex_ma->isMod->Write(temp_isMod);
+	ex_ma->isLsl->Write(temp_isLsl);
+	ex_ma->isLsr->Write(temp_isLsr);
+	ex_ma->isAsr->Write(temp_isAsr);
+	ex_ma->isOr->Write(temp_isOr);
+	ex_ma->isAnd->Write(temp_isAnd);
+	ex_ma->isNot->Write(temp_isNot);
 
 }
 
 //perform the memory operation
 void Core::mem_access() {
 	cout<<endl<<"!--------- MEMORY ACCESS ---------!"<<endl<<endl;
-	unsigned int mar = mem_address(aluResult);
-	unsigned int mdr = operand2;
 
-	if (isLd){
-		cout<<"Reading from Memory at address 0x"<<hex<<aluResult<<endl;
-		ldResult = MEM->Read(mar);
+	unsigned int temp_PC = ex_ma->PC->Read();
+	unsigned int temp_instruction_word = ex_ma->instruction_word->Read();
+
+	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
+	unsigned int temp_aluResult = ex_ma->aluResult->Read();
+	unsigned int temp_operand2 = ex_ma->operand2->Read();
+
+	bool temp_isSt = ex_ma->isSt->Read();
+	bool temp_isLd = ex_ma->isLd->Read();
+	bool temp_isBeq = ex_ma->isBeq->Read();
+	bool temp_isBgt = ex_ma->isBgt->Read();
+	bool temp_isRet = ex_ma->isRet->Read();
+	bool temp_isImmediate = ex_ma->isImmediate->Read();
+	bool temp_isWb = ex_ma->isWb->Read();
+	bool temp_isUbranch = ex_ma->isUbranch->Read();
+	bool temp_isCall = ex_ma->isCall->Read();
+	bool temp_isAdd = ex_ma->isAdd->Read();
+	bool temp_isSub = ex_ma->isSub->Read();
+	bool temp_isCmp = ex_ma->isCmp->Read();
+	bool temp_isMul = ex_ma->isMul->Read();
+	bool temp_isDiv = ex_ma->isDiv->Read();
+	bool temp_isMod = ex_ma->isMod->Read();
+	bool temp_isLsl = ex_ma->isLsl->Read();
+	bool temp_isLsr = ex_ma->isLsr->Read();
+	bool temp_isAsr = ex_ma->isAsr->Read();
+	bool temp_isOr = ex_ma->isOr->Read();
+	bool temp_isAnd = ex_ma->isAnd->Read();
+	bool temp_isNot = ex_ma->isNot->Read();
+
+	unsigned int temp_mar = mem_address(temp_aluResult);
+	unsigned int temp_mdr = temp_operand2;
+
+	unsigned int temp_ldResult;
+
+	if (temp_isLd){
+		cout<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
+		temp_ldResult = MEM->Read(temp_mar);
 	}
-	else if (isSt){
-		cout<<"Writing to Memory at address 0x"<<hex<<aluResult<<" with data "<<dec<<mdr<<endl;
-		MEM->Write(mar,mdr);
+	else if (temp_isSt){
+		cout<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
+		MEM->Write(temp_mar,temp_mdr);
 	}
 	else {
 		cout<<"Memory unit Disabled"<<endl;
 	}
+
+	ma_rw->PC->Write(temp_PC);
+	ma_rw->instruction_word->Write(temp_instruction_word);
+
+	ma_rw->ldResult->Write(temp_ldResult);
+	ma_rw->aluResult->Write(temp_aluResult);
+
+	ma_rw->isSt->Write(temp_isSt);
+	ma_rw->isLd->Write(temp_isLd);
+	ma_rw->isBeq->Write(temp_isBeq);
+	ma_rw->isBgt->Write(temp_isBgt);
+	ma_rw->isRet->Write(temp_isRet);
+	ma_rw->isImmediate->Write(temp_isImmediate);
+	ma_rw->isWb->Write(temp_isWb);
+	ma_rw->isUbranch->Write(temp_isUbranch);
+	ma_rw->isCall->Write(temp_isCall);
+	ma_rw->isAdd->Write(temp_isAdd);
+	ma_rw->isSub->Write(temp_isSub);
+	ma_rw->isCmp->Write(temp_isCmp);
+	ma_rw->isMul->Write(temp_isMul);
+	ma_rw->isDiv->Write(temp_isDiv);
+	ma_rw->isMod->Write(temp_isMod);
+	ma_rw->isLsl->Write(temp_isLsl);
+	ma_rw->isLsr->Write(temp_isLsr);
+	ma_rw->isAsr->Write(temp_isAsr);
+	ma_rw->isOr->Write(temp_isOr);
+	ma_rw->isAnd->Write(temp_isAnd);
+	ma_rw->isNot->Write(temp_isNot);
 }
 //writes the results back to register file
 void Core::write_back() {
 	cout<<endl<<"!--------- WRITE BACK ---------!"<<endl<<endl;
-	unsigned int result;
-	unsigned int addr;
 
-	if (isWb){
+	unsigned int temp_PC = ma_rw->PC->Read();
+	unsigned int temp_instruction_word = ma_rw->instruction_word->Read();
 
-		if (isLd){
-			result = ldResult;
-			cout<<"Writing data "<<dec<<result<<" (ldResult)";
+	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
+	unsigned int temp_ldResult = ma_rw->ldResult->Read();
+	unsigned int temp_aluResult = ma_rw->aluResult->Read();
+
+	bool temp_isSt = ma_rw->isSt->Read();
+	bool temp_isLd = ma_rw->isLd->Read();
+	bool temp_isBeq = ma_rw->isBeq->Read();
+	bool temp_isBgt = ma_rw->isBgt->Read();
+	bool temp_isRet = ma_rw->isRet->Read();
+	bool temp_isImmediate = ma_rw->isImmediate->Read();
+	bool temp_isWb = ma_rw->isWb->Read();
+	bool temp_isUbranch = ma_rw->isUbranch->Read();
+	bool temp_isCall = ma_rw->isCall->Read();
+	bool temp_isAdd = ma_rw->isAdd->Read();
+	bool temp_isSub = ma_rw->isSub->Read();
+	bool temp_isCmp = ma_rw->isCmp->Read();
+	bool temp_isMul = ma_rw->isMul->Read();
+	bool temp_isDiv = ma_rw->isDiv->Read();
+	bool temp_isMod = ma_rw->isMod->Read();
+	bool temp_isLsl = ma_rw->isLsl->Read();
+	bool temp_isLsr = ma_rw->isLsr->Read();
+	bool temp_isAsr = ma_rw->isAsr->Read();
+	bool temp_isOr = ma_rw->isOr->Read();
+	bool temp_isAnd = ma_rw->isAnd->Read();
+	bool temp_isNot = ma_rw->isNot->Read();
+
+	unsigned int temp_result;
+	unsigned int temp_addr;
+
+	if (temp_isWb){
+
+		if (temp_isLd){
+			temp_result = temp_ldResult;
+			cout<<"Writing data "<<dec<<temp_result<<" (temp_ldResult)";
 		}
-		else if (isCall){
-			result = PC + 4;
-			cout<<"Writing data "<<dec<<result<<" (PC + 4)";
+		else if (temp_isCall){
+			temp_result = temp_PC + 4;
+			cout<<"Writing data "<<dec<<temp_result<<" (PC + 4)";
 		}
 		else {
-			result = aluResult;
-			cout<<"Writing data "<<dec<<result<<" (aluResult)";
+			temp_result = temp_aluResult;
+			cout<<"Writing data "<<dec<<temp_result<<" (aluResult)";
 		}
 
-		if (isCall){			
-			addr = 15;
+		if (temp_isCall){			
+			temp_addr = 15;
 		}
 		else {
-			addr = inst_bitset(instruction_word,23,26);
+			temp_addr = inst_bitset(temp_instruction_word,23,26);
 		}
 	
-		cout<<" to register R"<<dec<<addr<<endl;
-		R[addr] = result;
+		cout<<" to register R"<<dec<<temp_addr<<endl;
+		R[temp_addr] = temp_result;
 
 	}
 	else {
