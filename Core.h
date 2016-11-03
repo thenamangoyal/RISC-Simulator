@@ -27,7 +27,7 @@ class Core
 		void write_state();
 		void run_simplesim();
 
-		//reads from the instruction memory and updates the PC register
+		//reads from the instruction memory
 		void fetch();
 		//reads the instruction register, reads operand1, operand2 from register file, decides the operation to be performed in execute stage
 		void decode();
@@ -50,47 +50,9 @@ class Core
 		PipelineRegister* ex_ma;
 		PipelineRegister* ma_rw;
 
-        unsigned int R[16];
-        unsigned int PC;
+		Regsiter<unsigned int>* PC;
+        unsigned int R[16];        
         bool eq, gt;
-
-        unsigned int instruction_word;
-		unsigned int operand1;
-		unsigned int operand2;
-
-		unsigned int immx;
-		unsigned int branchTarget;
-		unsigned int branchPC;
-		unsigned int aluResult;
-		unsigned int ldResult;
-
-		
-
-		bool isBranchTaken;
-
-		bool isSt;
-		bool isLd;
-		bool isBeq;
-		bool isBgt;
-		bool isRet;
-		bool isImmediate;
-		bool isWb;
-		bool isUbranch;
-		bool isCall;
-		bool isAdd;
-		bool isSub;
-		bool isCmp;
-		bool isMul;
-		bool isDiv;
-		bool isMod;
-		bool isLsl;
-		bool isLsr;
-		bool isAsr;
-		bool isOr;
-		bool isAnd;
-		bool isNot;
-		bool isMov;
-
 
 
 	private:
