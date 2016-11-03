@@ -2,6 +2,8 @@
 
 #include "Core.h"
 #include "Memory.h"
+#include "Register.h"
+#include "PipelineRegister.h"
 
 using namespace std;
 
@@ -13,7 +15,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	Core simulator;
+	bool to_pipeline = false;
+
+	if (argc >= 3){
+		if (argv[2][0] == '1'){
+			to_pipeline = true;
+		}
+
+	}
+
+	Core simulator(to_pipeline);
 
 	simulator.load_program_memory(argv[1]);
 
