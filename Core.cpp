@@ -133,6 +133,15 @@ void Core::run_simplesim(){
 		cout<<"========================"<<endl;
 		cout<<"CYCLE "<<dec<<counter+1<<endl;
 		cout<<"========================"<<endl;
+		if (check_data_dependency(if_of, of_ex)){
+			cout<<"Data Dependency between DECODE and EXECUTE"<<endl;
+		}
+		if (check_data_dependency(if_of, ex_ma)){
+			cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+		}
+		if (check_data_dependency(if_of, ma_rw)){
+			cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+		}
 		fix_control_dependency();
 		fetch_begin();
 		decode();
@@ -923,36 +932,120 @@ unsigned int Core::inst_bitset(unsigned int inst_word, unsigned int start, unsig
 	return inst_word;
 }
 
-bool Core::check_data_dependency(const PipelineRegister*& A, const PipelineRegister*& B){
-	unsigned int A_temp_instruction_word = A->instruction_word->Read();
+bool Core::check_data_dependency(PipelineRegister* A, PipelineRegister* B){
+	unsigned int A_instruction_word = A->instruction_word->Read();
 
-	unsigned int A_opcode1 = inst_bitset(A_temp_instruction_word, 28, 28);
-	unsigned int A_opcode2 = inst_bitset(A_temp_instruction_word, 29, 29);
-	unsigned int A_opcode3 = inst_bitset(A_temp_instruction_word, 30, 30);
-	unsigned int A_opcode4 = inst_bitset(A_temp_instruction_word, 31, 31);
-	unsigned int A_opcode5 = inst_bitset(A_temp_instruction_word, 32, 32);
+	unsigned int A_opcode1 = inst_bitset(A_instruction_word, 28, 28);
+	unsigned int A_opcode2 = inst_bitset(A_instruction_word, 29, 29);
+	unsigned int A_opcode3 = inst_bitset(A_instruction_word, 30, 30);
+	unsigned int A_opcode4 = inst_bitset(A_instruction_word, 31, 31);
+	unsigned int A_opcode5 = inst_bitset(A_instruction_word, 32, 32);
 
+	bool A_bubble_inst = A->bubble->Read();
+
+	if (A_bubble_inst){
+		return false;	//A is bubble
+	}
 	if (A_opcode5 == 0 && A_opcode4 == 1 && A_opcode3 == 1 && A_opcode2 == 0 && A_opcode1 == 1){
-		return false;	//nop
+		return false;	//A is nop
 	}
 	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 1 && A_opcode1 == 0){
-		return false;	//b
+		return false;	//A is b
 	}
 	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 0 && A_opcode1 == 0){
-		return false;	//beq
+		return false;	//A is beq
 	}
 	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 0 && A_opcode1 == 1){
-		return false;	//bgt
+		return false;	//A is bgt
 	}
 	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 1 && A_opcode1 == 1){
-		return false;	//call
+		return false;	//A is call
 	}
 
+	unsigned int B_instruction_word = B->instruction_word->Read();
+
+	unsigned int B_opcode1 = inst_bitset(B_instruction_word, 28, 28);
+	unsigned int B_opcode2 = inst_bitset(B_instruction_word, 29, 29);
+	unsigned int B_opcode3 = inst_bitset(B_instruction_word, 30, 30);
+	unsigned int B_opcode4 = inst_bitset(B_instruction_word, 31, 31);
+	unsigned int B_opcode5 = inst_bitset(B_instruction_word, 32, 32);
+
+	bool B_bubble_inst = B->bubble->Read();
+
+	if (B_bubble_inst){
+		return false;	//B is bubble
+	}
+	if (B_opcode5 == 0 && B_opcode4 == 1 && B_opcode3 == 1 && B_opcode2 == 0 && B_opcode1 == 1){
+		return false;	//B is nop
+	}
+	if (B_opcode5 == 0 && B_opcode4 == 0 && B_opcode3 == 1 && B_opcode2 == 0 && B_opcode1 == 1){
+		return false;	//B is cmp
+	}
+	if (B_opcode5 == 0 && B_opcode4 == 1 && B_opcode3 == 1 && B_opcode2 == 1 && B_opcode1 == 1){
+		return false;	//B is st
+	}
+	if (B_opcode5 == 1 && B_opcode4 == 0 && B_opcode3 == 0 && B_opcode2 == 1 && B_opcode1 == 0){
+		return false;	//B is b
+	}
+	if (B_opcode5 == 1 && B_opcode4 == 0 && B_opcode3 == 0 && B_opcode2 == 0 && B_opcode1 == 0){
+		return false;	//B is beq
+	}
+	if (B_opcode5 == 1 && B_opcode4 == 0 && B_opcode3 == 0 && B_opcode2 == 0 && B_opcode1 == 1){
+		return false;	//B is bgt
+	}
+	if (B_opcode5 == 1 && B_opcode4 == 0 && B_opcode3 == 1 && B_opcode2 == 0 && B_opcode1 == 0){
+		return false;	//B is ret
+	}
+
+	unsigned int A_rs1 = inst_bitset(A_instruction_word, 19,22);
+	unsigned int A_rs2 = inst_bitset(A_instruction_word, 15,18);
+	unsigned int A_rd = inst_bitset(A_instruction_word, 23,26);
+
+	unsigned int src1 = A_rs1;
+	unsigned int src2 = A_rs2;
+
+	if (A_opcode5 == 0 && A_opcode4 == 1 && A_opcode3 == 1 && A_opcode2 == 1 && A_opcode1 == 1){
+		//A is st
+		src2 = A_rd;
+	}
+	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 1 && A_opcode2 == 0 && A_opcode1 == 0){
+		//A is ret
+		src1 = 15;
+	}
+
+	unsigned int B_rd = inst_bitset(B_instruction_word, 23,26);
+
+	unsigned int dest = B_rd;
+
+	if (B_opcode5 == 1 && B_opcode4 == 0 && B_opcode3 == 0 && B_opcode2 == 1 && B_opcode1 == 1){
+		//B is call
+		dest = 15;
+	}
+
+	unsigned int A_I_bit = inst_bitset(A_instruction_word, 27, 27);
+
+	bool hasSrc2 = true;
+	if (!(A_opcode5 == 0 && A_opcode4 == 1 && A_opcode3 == 1 && A_opcode2 == 1 && A_opcode1 == 1)){
+		//A is NOT st
+		if (A_I_bit == 1){
+			hasSrc2 = false;
+		}
+	}
+
+	if (src1 == dest){
+		return true;
+	}
+
+	if (hasSrc2 && (src2 == dest)){
+		return true;
+	}
+
+	return false;
 }
 
 void Core::fix_control_dependency(){
 	if (pipeline && isBranchTaken){
-		cout<<"Control Dependency (isBranchTaken) so bubbling instructions in DECODE & EXECUTE"<<endl;
+		cout<<"Control Dependency (isBranchTaken) so bubbling instructions in DECODE and EXECUTE"<<endl;
 		if_of->bubble->Write(true);
 		of_ex->bubble->Write(true);
 		if_of->bubble->clock();
