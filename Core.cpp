@@ -148,6 +148,27 @@ void Core::run_simplesim(){
 
 		counter++;
 	}
+	if (INST_MAX && pipeline){
+		for(int i=0; i<4; i++){
+		cout<<"========================"<<endl;
+		cout<<"CYCLE "<<dec<<counter+1<<endl;
+		cout<<"========================"<<endl;
+		cout<<"Flushing pipeline"<<endl;
+		decode();
+		execute();
+		mem_access();
+		write_back();
+
+		if_of->bubble->Write(true);
+
+		if_of->clock();
+		of_ex->clock();
+		ex_ma->clock();
+		ma_rw->clock();
+
+		counter++;
+		}
+	}
 }
 
 //reads from the instruction memory
