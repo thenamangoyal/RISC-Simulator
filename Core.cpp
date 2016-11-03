@@ -133,6 +133,7 @@ void Core::run_simplesim(){
 		cout<<"========================"<<endl;
 		cout<<"CYCLE "<<dec<<counter+1<<endl;
 		cout<<"========================"<<endl;
+		fix_control_dependency();
 		fetch_begin();
 		decode();
 		execute();
@@ -455,7 +456,7 @@ void Core::decode() {
 		}
 		
 		temp_branchTarget += temp_PC;
-		cout<<endl<<"branchTarget temp_is 0x"<<hex<<temp_branchTarget<<endl;
+		cout<<endl<<"branchTarget is 0x"<<hex<<temp_branchTarget<<endl;
 
 
 		//////////   Reading Register File  ///////////
@@ -544,6 +545,7 @@ void Core::execute() {
 
 	if (bubble_inst){
 		cout<<"Pipeline bubble instruction"<<endl;
+		isBranchTaken = false;
 	}
 	else {
 	
@@ -921,3 +923,39 @@ unsigned int Core::inst_bitset(unsigned int inst_word, unsigned int start, unsig
 	return inst_word;
 }
 
+bool Core::check_data_dependency(const PipelineRegister*& A, const PipelineRegister*& B){
+	unsigned int A_temp_instruction_word = A->instruction_word->Read();
+
+	unsigned int A_opcode1 = inst_bitset(A_temp_instruction_word, 28, 28);
+	unsigned int A_opcode2 = inst_bitset(A_temp_instruction_word, 29, 29);
+	unsigned int A_opcode3 = inst_bitset(A_temp_instruction_word, 30, 30);
+	unsigned int A_opcode4 = inst_bitset(A_temp_instruction_word, 31, 31);
+	unsigned int A_opcode5 = inst_bitset(A_temp_instruction_word, 32, 32);
+
+	if (A_opcode5 == 0 && A_opcode4 == 1 && A_opcode3 == 1 && A_opcode2 == 0 && A_opcode1 == 1){
+		return false;	//nop
+	}
+	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 1 && A_opcode1 == 0){
+		return false;	//b
+	}
+	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 0 && A_opcode1 == 0){
+		return false;	//beq
+	}
+	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 0 && A_opcode1 == 1){
+		return false;	//bgt
+	}
+	if (A_opcode5 == 1 && A_opcode4 == 0 && A_opcode3 == 0 && A_opcode2 == 1 && A_opcode1 == 1){
+		return false;	//call
+	}
+
+}
+
+void Core::fix_control_dependency(){
+	if (pipeline && isBranchTaken){
+		cout<<"Control Dependency (isBranchTaken) so bubbling instructions in DECODE & EXECUTE"<<endl;
+		if_of->bubble->Write(true);
+		of_ex->bubble->Write(true);
+		if_of->bubble->clock();
+		of_ex->bubble->clock();
+	}
+}
