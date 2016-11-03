@@ -10,13 +10,15 @@
 #include <climits>
 
 #include "Memory.h"
+#include "Register.h"
+#include "PipelineRegister.h"
 
 const unsigned int MEM_CAPACITY  = 100000;
 
 class Core
 {
     public:
-    	Core();
+    	Core(bool pipe = false);
     	~Core();
 
         void run_simplesim();
@@ -41,6 +43,8 @@ class Core
     protected:
     
     private:
+    	bool pipeline;
+
         unsigned int R[16];
         unsigned int PC;
         bool eq, gt;

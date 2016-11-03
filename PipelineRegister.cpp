@@ -1,4 +1,4 @@
-#include <PipelineRegister.h>
+#include "PipelineRegister.h"
 
 Pipeline_Register::Pipeline_Register(bool pipe){
 	PC = new Register<unsigned int>(pipe);

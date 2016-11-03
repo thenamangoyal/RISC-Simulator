@@ -3,9 +3,10 @@
 using namespace std;
 
 
-Core::Core(){
+Core::Core(bool pipe){
 	INST_MAX = 0;
 	MEM = new Memory(MEM_CAPACITY);
+	pipeline = pipe;
 }
 
 Core::~Core(){
