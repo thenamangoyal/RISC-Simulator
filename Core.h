@@ -44,6 +44,13 @@ class Core
     
     private:
     	bool pipeline;
+    	unsigned int INST_MAX;
+    	Memory* MEM;	
+
+		PipelineRegister* if_of;
+		PipelineRegister* of_ex;
+		PipelineRegister* ex_ma;
+		PipelineRegister* ma_rw;
 
         unsigned int R[16];
         unsigned int PC;
@@ -59,8 +66,7 @@ class Core
 		unsigned int aluResult;
 		unsigned int ldResult;
 
-		Memory* MEM;
-		unsigned int INST_MAX;
+		
 
 		bool isBranchTaken;
 

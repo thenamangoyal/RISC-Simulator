@@ -7,10 +7,19 @@ Core::Core(bool pipe){
 	INST_MAX = 0;
 	MEM = new Memory(MEM_CAPACITY);
 	pipeline = pipe;
+
+	if_of = new PipelineRegister(pipe);
+	of_ex = new PipelineRegister(pipe);
+	ex_ma = new PipelineRegister(pipe);
+	ma_rw = new PipelineRegister(pipe);
 }
 
 Core::~Core(){
 	delete MEM;
+	delete if_of;
+	delete of_ex;
+	delete ex_ma;
+	delete ma_rw;
 }
 
 void Core::run_simplesim(){
