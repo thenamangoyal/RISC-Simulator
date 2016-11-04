@@ -137,7 +137,7 @@ void Core::run_simplesim(){
 	bool isControlDependency;
 
 	int counter = 0;
-	while ((PC->Read() != INST_MAX) || ( pipeline && ((if_of->bubble->Read() == false) || (of_ex->bubble->Read() == false) || (ex_ma->bubble->Read() == false) || (ma_rw->bubble->Read() == false)) )){
+	while ((PC->Read() < INST_MAX) || ( pipeline && ((if_of->bubble->Read() == false) || (of_ex->bubble->Read() == false) || (ex_ma->bubble->Read() == false) || (ma_rw->bubble->Read() == false)) )){
 		cout<<"========================"<<endl;
 		cout<<"CYCLE "<<dec<<counter+1<<endl;
 		cout<<"========================"<<endl;
@@ -200,7 +200,7 @@ void Core::fetch_begin() {
 	cout<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 
 	unsigned int temp_PC = PC->Read();
-	if (temp_PC != INST_MAX){
+	if (temp_PC < INST_MAX){
 		unsigned int temp_instruction_word = MEM->Read(temp_PC);	
 
 		cout<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
@@ -229,7 +229,7 @@ void Core::fetch_end() {
 	if (isBranchTaken){
 		PC->Write(branchPC);
 	}
-	else if (temp_PC != INST_MAX) {		
+	else if (temp_PC < INST_MAX) {		
 		PC->Write(temp_PC + 4);		
 	}
 
