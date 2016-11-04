@@ -5,8 +5,6 @@
 
 class PipelineRegister {
 public:
-	Register<bool>* terminate;
-
 	Register<bool>* bubble;
 
 	Register<unsigned int>* PC;
