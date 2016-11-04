@@ -1,8 +1,8 @@
-===============================
-SimpleRISC Functional Simulator
-===============================
+==========================================
+SimpleRISC Functional & Pipeline Simulator
+==========================================
 
-The project simulates SimpleRISC functional processor using C++.
+The project simulates SimpleRISC functional & pipeline processor using C++.
 
 
 To compile and run the code in linux follow the follwing steps in the home directory of project folder.
@@ -10,11 +10,14 @@ To compile and run the code in linux follow the follwing steps in the home direc
 *To compile execute the following command in terminal
 make
 
-*To run the program
+*To run the functional program
 ./sim test/<INPUT MEM FILE>
 
-*To export the result for a test file eg. array_sum.mem
-./sim test/array_sum.mem>output
+*To run the pipeline program
+./sim test/<INPUT MEM FILE> 1
+
+*To export the result for a test file eg. array_sum.mem with pipeline
+./sim test/array_sum.mem 1 >output
 
 *To clean compiled code
 make clean
@@ -32,5 +35,3 @@ The output contains instruction by instruction work done in each cycle in all st
 
 Developed by
 NAMAN GOYAL, 2015CSB1021
-EESHAAN SHARMA, 2015CSB1011
-
