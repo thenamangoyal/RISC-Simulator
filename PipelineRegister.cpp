@@ -1,6 +1,7 @@
 #include "PipelineRegister.h"
 
 PipelineRegister::PipelineRegister(bool pipe){
+	terminate = new Register<bool>(pipe);
 	bubble = new Register<bool>(pipe);
 
 	PC = new Register<unsigned int>(pipe);
@@ -37,6 +38,8 @@ PipelineRegister::PipelineRegister(bool pipe){
 }
 
 PipelineRegister::~PipelineRegister(){
+	delete terminate;
+
 	delete bubble;
 
 	delete PC;
@@ -73,6 +76,8 @@ PipelineRegister::~PipelineRegister(){
 }
 
 PipelineRegister& PipelineRegister::operator=(const PipelineRegister& r){
+	terminate = r.terminate;
+
 	bubble = r.bubble;
 
 	PC = r.PC;
@@ -109,6 +114,7 @@ PipelineRegister& PipelineRegister::operator=(const PipelineRegister& r){
 }
 
 void PipelineRegister::clock(){
+	terminate->clock();
 	bubble->clock();
 	PC->clock();
 	instruction_word->clock();
