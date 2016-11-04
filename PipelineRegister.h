@@ -42,6 +42,8 @@ public:
 	PipelineRegister(bool pipe);
 	~PipelineRegister();
 	void clock();
+	void WriteBubble(bool to_bubble);
+	void ForwardBubble(bool to_bubble);
 	PipelineRegister& operator=(const PipelineRegister& r);
 };
 

@@ -108,6 +108,60 @@ PipelineRegister& PipelineRegister::operator=(const PipelineRegister& r){
 	isMov = r.isMov;
 }
 
+void PipelineRegister::WriteBubble(bool to_bubble) {
+
+	if (to_bubble) {
+		bubble->Write(true);
+
+		PC->Write(0x0);
+		instruction_word->Write(0x68000000);
+
+		branchTarget->Write(0x0);
+		A->Write(0x0);
+		B->Write(0x0);
+		operand2->Write(0x0);
+		aluResult->Write(0x0);
+		ldResult->Write(0x0);
+
+		isSt->Write(false);
+		isLd->Write(false);
+		isBeq->Write(false);
+		isBgt->Write(false);
+		isRet->Write(false);
+		isImmediate->Write(false);
+		isWb->Write(false);
+		isUbranch->Write(false);
+		isCall->Write(false);
+		isAdd->Write(false);
+		isSub->Write(false);
+		isCmp->Write(false);
+		isMul->Write(false);
+		isDiv->Write(false);
+		isMod->Write(false);
+		isLsl->Write(false);
+		isLsr->Write(false);
+		isAsr->Write(false);
+		isOr->Write(false);
+		isAnd->Write(false);
+		isNot->Write(false);
+		isMov->Write(false);
+	}
+	else {
+		bubble->Write(false);
+	}
+}
+
+
+void PipelineRegister::ForwardBubble(bool to_bubble) {
+
+	if (to_bubble) {
+		bubble->Write(true);
+	}
+	else {
+		bubble->Write(false);
+	}
+}
+
 void PipelineRegister::clock(){
 	bubble->clock();
 	PC->clock();
