@@ -132,7 +132,7 @@ void Core::run_simplesim(){
 	bool isControlDependency;
 
 	int counter = 0;
-	while (ma_rw->terminate->Read() == false){
+	while ((if_of->terminate->Read() == false) || (of_ex->terminate->Read() == false) || (ex_ma->terminate->Read() == false) || (ma_rw->terminate->Read() == false)){
 		cout<<"========================"<<endl;
 		cout<<"CYCLE "<<dec<<counter+1<<endl;
 		cout<<"========================"<<endl;
@@ -204,7 +204,7 @@ void Core::fetch_begin() {
 
 	}
 	else {
-		cout<<"Terminate Instruction"<<endl;
+		cout<<"Invalid PC passing Terminate Instruction"<<endl;
 		if_of->terminate->Write(true);
 	}
 	
@@ -219,14 +219,12 @@ void Core::fetch_begin() {
 void Core::fetch_end() {
 
 	unsigned int temp_PC = PC->Read();
-
-	if (temp_PC != INST_MAX){
-		if (isBranchTaken){
-			PC->Write(branchPC);
-		}
-		else {		
-			PC->Write(temp_PC + 4);		
-		}
+	
+	if (isBranchTaken){
+		PC->Write(branchPC);
+	}
+	else if (temp_PC != INST_MAX) {		
+		PC->Write(temp_PC + 4);		
 	}
 
 }
@@ -601,6 +599,7 @@ void Core::execute() {
 
 	if (terminate_inst){
 		cout<<"Terminate Instruction"<<endl;
+		isBranchTaken = false;
 	}
 	else {
 
@@ -609,7 +608,6 @@ void Core::execute() {
 		if (bubble_inst){
 			cout<<"Pipeline Bubble Instruction"<<endl;
 			isBranchTaken = false;
-			branchPC = 0x0;
 		}
 		else {
 		
