@@ -31,21 +31,27 @@ Core::~Core(){
 void Core::load_program_memory(const char* file_name){
 	ifstream inst_file;
 	inst_file.open(file_name,ios::in);
-	string temp;
-	while(getline(inst_file, temp)){
-		if (temp[0] == '#'){
-			// Input comments
+	if(inst_file.fail()) {
+        cout<<"Invalid Input file"<<endl;
+    }
+    else {
+    	string temp;
+		while(getline(inst_file, temp)){
+			if (temp[0] == '#'){
+				// Input comments
+			}
+			else {
+				stringstream line(temp);
+				unsigned int address;
+				unsigned int inst;
+				line>>hex>>address;
+				line>>hex>>inst;
+				MEM->Write(address, inst);
+				INST_MAX += 4;
+			}
 		}
-		else {
-			stringstream line(temp);
-			unsigned int address;
-			unsigned int inst;
-			line>>hex>>address;
-			line>>hex>>inst;
-			MEM->Write(address, inst);
-			INST_MAX += 4;
-		}		
-	}
+    }
+	
 	inst_file.close();
 }
 
