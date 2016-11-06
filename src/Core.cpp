@@ -757,11 +757,11 @@ void Core::execute() {
 		unsigned int count = temp_B;
 		while(count){
 			if (temp_aluResult>>31 == 1){
-				temp_aluResult>>1;
+				temp_aluResult = temp_aluResult>>1;
 				temp_aluResult = temp_aluResult | 0x80000000;
 			}
 			else{
-				temp_aluResult>>1;
+				temp_aluResult = temp_aluResult>>1;
 			}		
 
 			count--;
@@ -773,6 +773,7 @@ void Core::execute() {
 		temp_aluResult = temp_A | temp_B;
 	}
 
+	// NOT implemented using 1's Complement
 	if (temp_isNot){
 		cout<<"NOT operation"<<endl;
 		temp_aluResult = ~temp_B;
@@ -957,7 +958,7 @@ void Core::write_back() {
 
 		if (temp_isLd){
 			temp_result = temp_ldResult;
-			cout<<"Writing data "<<dec<<temp_result<<" (temp_ldResult)";
+			cout<<"Writing data "<<dec<<temp_result<<" (ldResult)";
 		}
 		else if (temp_isCall){
 			temp_result = temp_PC + 4;
