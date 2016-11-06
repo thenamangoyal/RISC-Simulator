@@ -11,6 +11,7 @@ Core::Core(bool pipe){
 		MEM->Write(i, 0x0);
 	}
 
+	invalidInputFile = false;
 	pipeline = pipe;
 
 	if_of = new PipelineRegister(pipe);
@@ -38,8 +39,10 @@ void Core::load_program_memory(const char* file_name){
 	inst_file.open(file_name,ios::in);
 	if(inst_file.fail()) {
         cout<<"Invalid Input file"<<endl;
+        invalidInputFile = true;
     }
     else {
+    	invalidInputFile = false;
     	if (pipeline) {
 			cout<<"Pipeline Based"<<endl;
 		}
@@ -56,10 +59,18 @@ void Core::load_program_memory(const char* file_name){
 				stringstream line(temp);
 				unsigned int address;
 				unsigned int inst;
-				line>>hex>>address;
-				line>>hex>>inst;
-				MEM->Write(address, inst);
-				INST_MAX += 4;
+				bool isReadAddr = (line>>hex>>address);
+				bool isReadInst = (line>>hex>>inst);
+
+				if (isReadAddr && isReadInst) {
+					MEM->Write(address, inst);
+					INST_MAX += 4;
+				}
+				else {
+					// Invalid Encoding in Input MEM file
+				}
+
+				
 			}
 		}
 
@@ -207,6 +218,13 @@ void Core::run_simplesim(){
 		cout<<endl;
 
 		counter++;
+	}
+
+	if (!invalidInputFile) {
+		cout<<endl;
+		cout<<"+----------------------------------+"<<endl;
+		cout<<"Total number of cycles  are "<<dec<<counter<<endl;
+		cout<<"+----------------------------------+"<<endl;
 	}
 
 }

@@ -43,6 +43,7 @@ class Core
     protected:
     
     private:
+    	bool invalidInputFile;
     	bool pipeline;
     	unsigned int INST_MAX;
     	Memory* MEM;	

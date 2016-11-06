@@ -153,13 +153,9 @@ void PipelineRegister::WriteBubble(bool to_bubble) {
 
 
 void PipelineRegister::ForwardBubble(bool to_bubble) {
+	
+	bubble->Write(to_bubble);
 
-	if (to_bubble) {
-		bubble->Write(true);
-	}
-	else {
-		bubble->Write(false);
-	}
 }
 
 void PipelineRegister::clock(){
