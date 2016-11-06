@@ -6,6 +6,11 @@ using namespace std;
 Core::Core(bool pipe){
 	INST_MAX = 0;
 	MEM = new Memory(MEM_CAPACITY);
+
+	for (unsigned int i= 0; i < MEM_CAPACITY; i+= 4){
+		MEM->Write(i, 0x0);
+	}
+
 	pipeline = pipe;
 
 	if_of = new PipelineRegister(pipe);
@@ -1064,6 +1069,17 @@ bool Core::check_data_conflict(PipelineRegister* A, PipelineRegister* B){
 
 	unsigned int A_I_bit = inst_bitset(A_instruction_word, 27, 27);
 
+	bool hasSrc1 = true;
+
+	if (A_opcode5 == 0 && A_opcode4 == 1 && A_opcode3 == 0 && A_opcode2 == 0 && A_opcode1 == 1){
+		//A is mov
+		hasSrc1 = false;
+	}
+	if (A_opcode5 == 0 && A_opcode4 == 1 && A_opcode3 == 0 && A_opcode2 == 0 && A_opcode1 == 0){
+		//A is not
+		hasSrc1 = false;
+	}
+
 	bool hasSrc2 = true;
 	if (!(A_opcode5 == 0 && A_opcode4 == 1 && A_opcode3 == 1 && A_opcode2 == 1 && A_opcode1 == 1)){
 		//A is NOT st
@@ -1072,7 +1088,7 @@ bool Core::check_data_conflict(PipelineRegister* A, PipelineRegister* B){
 		}
 	}
 
-	if (src1 == dest){
+	if (hasSrc1 && (src1 == dest)){
 		return true;
 	}
 
