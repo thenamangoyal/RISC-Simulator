@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 
 #include "Core.h"
 #include "Memory.h"
@@ -10,6 +11,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+	clock_t begin = clock();
+
 	if (argc<2){
 		cout<<"Please provide Instruction MEM file as an argument"<<endl;
 		return 1;
@@ -35,6 +38,11 @@ int main(int argc, char *argv[])
 	simulator.write_data_memory();
 
 	simulator.write_state();
+
+	clock_t end = clock();
+	double time = double(end - begin) / CLOCKS_PER_SEC;
+
+	cout<<endl<<"Running time: "<<dec<<time<<endl;
 
     return 0;
 }
