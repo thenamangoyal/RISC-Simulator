@@ -1,0 +1,70 @@
+========================================================
+Functional & Pipeline Simulator for simpleRISC processor
+========================================================
+
+README
+
+Table of contents
+1. Directory Structure
+2. How to build
+3. How to execute
+
+Directory Structure:
+--------------------
+CSL211-Project
+  |
+  |- bin
+      |
+      |- sim
+  |- include
+      |
+      |- Core.h
+      |- Memory.h
+      |- PipelineRegister.h
+      |- Register.h
+  |- src
+      |- main.cpp
+      |- Core.cpp
+      |- Memory.cpp
+      |- PipelineRegister.cpp
+  |- test
+      |- simple_add.mem
+      |- fib.mem
+      |- array_add.mem
+
+How to build
+------------
+For building:
+	$make
+
+For cleaning the project:
+	$make clean
+
+How to execute
+--------------
+To run the functional program
+./bin/sim test/<INPUT MEM FILE>
+
+To run the pipeline program
+./bin/sim test/<INPUT MEM FILE> 1
+
+To export the result for a test file eg. array_sum.mem with pipeline
+./bin/sim test/array_sum.mem 1 > output
+
+The code generates a DATA_OUT.mem i.e. the complete memory at the termination of program 
+and a STATE_OUT.mem i.e. complete state of processor at the termination of program.
+
+The output contains instruction by instruction work done in each cycle in all stages namely -
+
+1. FETCH
+2. DEOCDE
+3. EXECUTE
+4. MEMORY ACCESS
+5. WRITEBACK
+
+Developed by
+NAMAN GOYAL, 2015CSB1021
+EESHAAN SHARMA, 2015CSB1011
+
+
+
