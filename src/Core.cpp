@@ -728,17 +728,17 @@ void Core::execute() {
 
 	if (temp_isMul){
 		cout<<"MUL operation"<<endl;
-		temp_aluResult = temp_A * temp_B;
+		temp_aluResult = (unsigned int)( (signed int)temp_A * (signed int)temp_B );
 	}
 
 	if (temp_isDiv){
 		cout<<"DIV operation"<<endl;
-		temp_aluResult = temp_A / temp_B;
+		temp_aluResult = (unsigned int)( (signed int)temp_A / (signed int)temp_B );
 	}
 
 	if (temp_isMod){
 		cout<<"MOD operation"<<endl;
-		temp_aluResult = temp_A % temp_B;
+		temp_aluResult = (unsigned int)( (signed int)temp_A % (signed int)temp_B );
 	}
 
 	if (temp_isLsl){

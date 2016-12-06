@@ -28,7 +28,6 @@
 *.out
 *.app
 
-sim
 output
 DATA_OUT.mem
 STATE_OUT.mem
