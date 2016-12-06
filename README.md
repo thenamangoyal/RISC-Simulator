@@ -43,14 +43,22 @@ For cleaning the project:
 
 How to execute
 --------------
-To run the functional program
-./bin/sim test/<INPUT MEM FILE>
 
-To run the pipeline program
-./bin/sim test/<INPUT MEM FILE> 1
+$./bin/sim test/<INPUT MEM FILE> <0/1> <0/1/2>
+-----I---- ----------II--------- -III- ---IV--
 
-To export the result for a test file eg. array_sum.mem with pipeline
-./bin/sim test/array_sum.mem 1 > output
+III argument
+* Optional
+* 0 for Single Cycle Based
+* 1 for Pipeline Based
+
+IV argument
+* Optional
+* Specify level of prinitng
+* 0 for recording .print statements
+* 1 for recording accesses to Memory & updates to Register File
+* 2 for recording all signals at every cycle
+
 
 The code generates a DATA_OUT.mem i.e. the complete memory at the termination of program 
 and a STATE_OUT.mem i.e. complete state of processor at the termination of program.
@@ -67,5 +75,3 @@ Developed by
 Naman Goyal (email: 2015csb1021@iitrpr.ac.in)
 Supervised by
 Dr. Neeraj Goel (email: neeraj@iitrpr.ac.in)
-
-This project is extension of work done by Naman Goyal and Eeshaan Sharma.
