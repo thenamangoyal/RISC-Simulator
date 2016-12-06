@@ -44,13 +44,13 @@ For cleaning the project:
 How to execute
 --------------
 
-$./bin/sim test/<INPUT MEM FILE> <0/1> <0/1/2>
------I---- ----------II--------- -III- ---IV--
+$./bin/sim (Input_MEM_file_path) [0 | 1] [0 | 1 | 2]
 
 III argument
 * Optional
 * 0 for Single Cycle Based
 * 1 for Pipeline Based
+* Default 0
 
 IV argument
 * Optional
@@ -58,6 +58,7 @@ IV argument
 * 0 for recording .print statements
 * 1 for recording accesses to Memory & updates to Register File
 * 2 for recording all signals at every cycle
+* Default 0
 
 
 The code generates a DATA_OUT.mem i.e. the complete memory at the termination of program 
