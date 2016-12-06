@@ -21,7 +21,7 @@
 
 using namespace std;
 
-Core::Core(bool pipe): INST_MAX(0), MEM(MEM_CAPACITY), invalidInputFile(false), pipeline(pipe), if_of(pipe), of_ex(pipe), ex_ma(pipe), ma_rw(pipe), PC(true) {
+Core::Core(): INST_MAX(0), MEM(MEM_CAPACITY), invalidInputFile(false), if_of(pipeline), of_ex(pipeline), ex_ma(pipeline), ma_rw(pipeline), PC(true) {
 	
 	for (unsigned int i= 0; i < MEM_CAPACITY; i+= 4){
 		MEM.Write(i, 0x0);

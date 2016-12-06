@@ -20,6 +20,7 @@
 #include <iostream>
 #include <ctime>
 
+#include "Global.h"
 #include "Core.h"
 #include "Memory.h"
 #include "Register.h"
@@ -27,8 +28,9 @@
 
 using namespace std;
 
-int MEM_CAPACITY = 100000;
+bool pipeline = false;
 int debugLevel = 0;
+int MEM_CAPACITY = 100000;
 
 int main(int argc, char *argv[])
 {
@@ -39,11 +41,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	bool to_pipeline = false;	
-
 	if (argc > 2){
 		if (argv[2][0] == '1'){
-			to_pipeline = true;
+			pipeline = true;
 		}
 
 	}
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
 	}
 
-	Core simulator(to_pipeline);
+	Core simulator;
 
 	simulator.load_program_memory(argv[1]);
 

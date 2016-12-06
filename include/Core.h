@@ -27,19 +27,17 @@
 #include <bitset>
 #include <climits>
 
+#include "Global.h"
 #include "Memory.h"
 #include "Register.h"
 #include "PipelineRegister.h"
-
-extern int MEM_CAPACITY;
-extern int debugLevel;
 
 #define dprint(x) if (debugLevel >= x) std::cout
 
 class Core
 {
     public:
-    	Core(bool pipe = false);
+    	Core();
         
 		void reset_proc();
 		void load_program_memory(const char* file_name);
@@ -64,7 +62,6 @@ class Core
     
     private:
     	bool invalidInputFile;
-    	bool pipeline;
     	unsigned int INST_MAX;
     	Memory MEM;	
 
