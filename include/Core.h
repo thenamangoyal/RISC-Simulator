@@ -31,7 +31,10 @@
 #include "Register.h"
 #include "PipelineRegister.h"
 
-const unsigned int MEM_CAPACITY  = 100000;
+extern int MEM_CAPACITY;
+extern int debugLevel;
+
+#define dprint(x) if (debugLevel >= x) std::cout
 
 class Core
 {

@@ -27,6 +27,8 @@
 
 using namespace std;
 
+int MEM_CAPACITY = 100000;
+int debugLevel = 0;
 
 int main(int argc, char *argv[])
 {
@@ -37,11 +39,21 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	bool to_pipeline = false;
+	bool to_pipeline = false;	
 
-	if (argc >= 3){
+	if (argc > 2){
 		if (argv[2][0] == '1'){
 			to_pipeline = true;
+		}
+
+	}
+
+	if (argc > 3){
+		if (argv[3][0] == '1'){
+			debugLevel = 1;
+		}
+		else if (argv[3][0] > '1'){
+			debugLevel = 2;
 		}
 
 	}
@@ -61,7 +73,7 @@ int main(int argc, char *argv[])
 	clock_t end = clock();
 	double time = double(end - begin) / CLOCKS_PER_SEC;
 
-	cout<<endl<<"Running time: "<<dec<<time<<endl;
+	dprint(2)<<endl<<"Running time: "<<dec<<time<<endl;
 
     return 0;
 }
