@@ -35,6 +35,8 @@ int MEM_CAPACITY = 100000;
 
 int main(int argc, char *argv[])
 {
+	MEM_CAPACITY = MEM_CAPACITY - (MEM_CAPACITY % sizeof(unsigned int));
+
 	clock_t begin = clock();
 
 	if (argc<2){
