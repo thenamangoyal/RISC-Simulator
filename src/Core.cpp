@@ -35,10 +35,10 @@ void Core::load_program_memory(const char* file_name){
 	inst_file.open(file_name,ios::in);
 	
 	if (pipeline) {
-		cout<<"Pipeline Based"<<endl;
+		dprint(2)<<"Pipeline Based"<<endl;
 	}
 	else {
-		cout<<"Single Cycle Based"<<endl;
+		dprint(2)<<"Single Cycle Based"<<endl;
 	}
 
 	string temp;
@@ -144,9 +144,9 @@ void Core::run_simplesim(){
 
 	int counter = 0;
 	while ((PC.Read() < INST_MAX) || ( pipeline && ((if_of.bubble.Read() == false) || (of_ex.bubble.Read() == false) || (ex_ma.bubble.Read() == false) || (ma_rw.bubble.Read() == false)) )){
-		cout<<"========================"<<endl;
-		cout<<"CYCLE "<<dec<<counter+1<<endl;
-		cout<<"========================"<<endl;
+		dprint(1)<<"========================"<<endl;
+		dprint(1)<<"CYCLE "<<dec<<counter+1<<endl;
+		dprint(1)<<"========================"<<endl;
 
 		fetch_begin();
 		decode();
@@ -168,13 +168,13 @@ void Core::run_simplesim(){
 
 		}
 		else if (isDataDependency && !isControlDependency){
-			cout<<endl;
-			cout<<"+-----------------------+"<<endl;
-			cout<<"|    Data Dependency    |"<<endl;
-			cout<<"| Stalling PC and IF-OF |"<<endl;
-			cout<<"|     Bubbling OF-EX    |"<<endl;
-			cout<<"+-----------------------+"<<endl;
-			cout<<endl;
+			dprint(2)<<endl;
+			dprint(2)<<"+-----------------------+"<<endl;
+			dprint(2)<<"|    Data Dependency    |"<<endl;
+			dprint(2)<<"| Stalling PC and IF-OF |"<<endl;
+			dprint(2)<<"|     Bubbling OF-EX    |"<<endl;
+			dprint(2)<<"+-----------------------+"<<endl;
+			dprint(2)<<endl;
 
 			of_ex.WriteBubble(true);
 			of_ex.clock();
@@ -184,13 +184,13 @@ void Core::run_simplesim(){
 
 		}
 		else{
-			cout<<endl;
-			cout<<"+-----------------------+"<<endl;
-			cout<<"|   Control Dependency  |"<<endl;
-			cout<<"|     Bubbling IF-OF    |"<<endl;
-			cout<<"|     Bubbling OF-EX    |"<<endl;
-			cout<<"+-----------------------+"<<endl;
-			cout<<endl;
+			dprint(2)<<endl;
+			dprint(2)<<"+-----------------------+"<<endl;
+			dprint(2)<<"|   Control Dependency  |"<<endl;
+			dprint(2)<<"|     Bubbling IF-OF    |"<<endl;
+			dprint(2)<<"|     Bubbling OF-EX    |"<<endl;
+			dprint(2)<<"+-----------------------+"<<endl;
+			dprint(2)<<endl;
 
 			PC.clock();
 
@@ -204,27 +204,27 @@ void Core::run_simplesim(){
 			ma_rw.clock();
 		}
 
-		cout<<"New PC = 0x"<<hex<<PC.Read()<<endl<<endl;
+		dprint(2)<<"New PC = 0x"<<hex<<PC.Read()<<endl<<endl;
 
 		counter++;
 	}
 	
-	cout<<endl;
-	cout<<"+----------------------------------+"<<endl;
-	cout<<"Total number of cycles  are "<<dec<<counter<<endl;
-	cout<<"+----------------------------------+"<<endl;	
+	dprint(2)<<endl;
+	dprint(2)<<"+----------------------------------+"<<endl;
+	dprint(2)<<"Total number of cycles  are "<<dec<<counter<<endl;
+	dprint(2)<<"+----------------------------------+"<<endl;	
 
 }
 
 //reads from the instruction memory
 void Core::fetch_begin() {
-	cout<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
+	dprint(2)<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 
 	unsigned int temp_PC = PC.Read();
 	if (temp_PC < INST_MAX){
 		unsigned int temp_instruction_word = MEM.Read(temp_PC);	
 
-		cout<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
+		dprint(1)<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
 
 		if_of.instruction_word.Write(temp_instruction_word);
 		if_of.WriteBubble(false);
@@ -232,7 +232,7 @@ void Core::fetch_begin() {
 
 	}
 	else {
-		cout<<"Invalid PC passing Bubble Instruction"<<endl;
+		dprint(2)<<"Invalid PC passing Bubble Instruction"<<endl;
 		if_of.WriteBubble(true);
 	}
 	
@@ -255,18 +255,18 @@ void Core::fetch_end() {
 
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
 void Core::decode() {
-	cout<<endl<<"!--------- DECODE ---------!"<<endl<<endl;
+	dprint(2)<<endl<<"!--------- DECODE ---------!"<<endl<<endl;
 
 	bool bubble_inst = if_of.bubble.Read();
 
 	if (bubble_inst){
-		cout<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		dprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 	
 	unsigned int temp_PC = if_of.PC.Read();
 	unsigned int temp_instruction_word = if_of.instruction_word.Read();
 
-	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+	dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 	bool temp_isSt;
 	bool temp_isLd;
@@ -298,10 +298,10 @@ void Core::decode() {
 	unsigned int opcode4 = inst_bitset(temp_instruction_word, 31, 31);
 	unsigned int opcode5 = inst_bitset(temp_instruction_word, 32, 32);
 	unsigned int I_bit = inst_bitset(temp_instruction_word, 27, 27);
-	cout<<"Control Signals"<<endl;
+	dprint(2)<<"Control Signals"<<endl;
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		temp_isSt = true;
-		cout<<"isSt ";
+		dprint(2)<<"isSt ";
 	}
 	else{
 		temp_isSt = false;
@@ -309,7 +309,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
 		temp_isLd = true;
-		cout<<"isLd ";
+		dprint(2)<<"isLd ";
 	}
 	else{
 		temp_isLd = false;
@@ -317,7 +317,7 @@ void Core::decode() {
 	
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		temp_isBeq = true;
-		cout<<"isBeq ";
+		dprint(2)<<"isBeq ";
 	}
 	else{
 		temp_isBeq = false;
@@ -325,7 +325,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		temp_isBgt = true;
-		cout<<"isBgt ";
+		dprint(2)<<"isBgt ";
 	}
 	else{
 		temp_isBgt = false;
@@ -333,7 +333,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		temp_isRet = true;
-		cout<<"isRet ";
+		dprint(2)<<"isRet ";
 	}
 	else{
 		temp_isRet = false;
@@ -341,7 +341,7 @@ void Core::decode() {
 
 	if(I_bit == 1){
 		temp_isImmediate = true;
-		cout<<"isImmediate ";
+		dprint(2)<<"isImmediate ";
 	}
 	else{
 		temp_isImmediate = false;
@@ -349,7 +349,7 @@ void Core::decode() {
 
 	if( !(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 == 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
 		temp_isWb = true;
-		cout<<"isWb ";
+		dprint(2)<<"isWb ";
 	}
 	else{
 		temp_isWb = false;
@@ -357,7 +357,7 @@ void Core::decode() {
 
 	if( opcode5 == 1 && opcode4 == 0 && (	(opcode3 == 0 && opcode2 == 1) || (opcode3 == 1 && opcode2 == 0 && opcode1 == 0) ) 	){
 		temp_isUbranch = true;
-		cout<<"isUbranch ";
+		dprint(2)<<"isUbranch ";
 	}
 	else{
 		temp_isUbranch = false;
@@ -365,7 +365,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		temp_isCall = true;
-		cout<<"isCall ";
+		dprint(2)<<"isCall ";
 	}
 	else{
 		temp_isCall = false;
@@ -373,11 +373,11 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		temp_isAdd = true;
-		cout<<"isAdd ";
+		dprint(2)<<"isAdd ";
 	}
 	else if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1){
 		temp_isAdd = true;
-		cout<<"isAdd ";
+		dprint(2)<<"isAdd ";
 	}
 	else{
 		temp_isAdd = false;
@@ -385,7 +385,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		temp_isSub = true;
-		cout<<"isSub ";
+		dprint(2)<<"isSub ";
 	}
 	else{
 		temp_isSub = false;
@@ -393,7 +393,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 1){
 		temp_isCmp = true;
-		cout<<"isCmp ";
+		dprint(2)<<"isCmp ";
 	}
 	else{
 		temp_isCmp = false;
@@ -401,7 +401,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		temp_isMul = true;
-		cout<<"isMul ";
+		dprint(2)<<"isMul ";
 	}
 	else{
 		temp_isMul = false;
@@ -409,7 +409,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		temp_isDiv = true;
-		cout<<"isDiv ";
+		dprint(2)<<"isDiv ";
 	}
 	else{
 		temp_isDiv = false;
@@ -417,7 +417,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		temp_isMod = true;
-		cout<<"isMod ";
+		dprint(2)<<"isMod ";
 	}
 	else{
 		temp_isMod = false;
@@ -425,7 +425,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		temp_isLsl = true;
-		cout<<"isLsl ";
+		dprint(2)<<"isLsl ";
 	}
 	else{
 		temp_isLsl = false;
@@ -433,7 +433,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		temp_isLsr = true;
-		cout<<"islsr ";
+		dprint(2)<<"islsr ";
 	}
 	else{
 		temp_isLsr = false;
@@ -441,7 +441,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		temp_isAsr = true;
-		cout<<"isAsr ";
+		dprint(2)<<"isAsr ";
 	}
 	else{
 		temp_isAsr = false;
@@ -449,7 +449,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		temp_isOr = true;
-		cout<<"isOr ";
+		dprint(2)<<"isOr ";
 	}
 	else{
 		temp_isOr = false;
@@ -457,7 +457,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
 		temp_isAnd = true;
-		cout<<"isAnd ";
+		dprint(2)<<"isAnd ";
 	}
 	else{
 		temp_isAnd = false;
@@ -465,7 +465,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		temp_isNot = true;
-		cout<<"isNot ";
+		dprint(2)<<"isNot ";
 	}
 	else{
 		temp_isNot = false;
@@ -473,16 +473,16 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		temp_isMov = true;
-		cout<<"isMov ";
+		dprint(2)<<"isMov ";
 	}
 	else{
 		temp_isMov = false;
 	}
-	cout<<endl;
+	dprint(2)<<endl;
 
 
 	//////////   immx calculation  ///////////
-	cout<<endl;
+	dprint(2)<<endl;
 	unsigned int temp_imm = inst_bitset(temp_instruction_word, 1, 16);
 	unsigned int temp_u = inst_bitset(temp_instruction_word, 17, 17);
 	unsigned int temp_h = inst_bitset(temp_instruction_word, 18, 18);
@@ -496,15 +496,15 @@ void Core::decode() {
 		else{
 			temp_immx = temp_imm;
 		}
-		cout<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<")"<<endl;
+		dprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<")"<<endl;
 	}
 	else if (temp_u == 1){
 		temp_immx = temp_imm;
-		cout<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") and is Unsigned"<<endl;
+		dprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") and is Unsigned"<<endl;
 	}
 	else{
 		temp_immx = temp_imm<<16;
-		cout<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") ans is High"<<endl;
+		dprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") ans is High"<<endl;
 	}
 
 
@@ -520,7 +520,7 @@ void Core::decode() {
 	}
 	
 	temp_branchTarget += temp_PC;
-	cout<<endl<<"branchTarget is 0x"<<hex<<temp_branchTarget<<endl;
+	dprint(2)<<endl<<"branchTarget is 0x"<<hex<<temp_branchTarget<<endl;
 
 
 	//////////   Reading Register File  ///////////
@@ -530,39 +530,39 @@ void Core::decode() {
 	unsigned int temp_rs1 = inst_bitset(temp_instruction_word, 19,22);
 	unsigned int temp_rs2 = inst_bitset(temp_instruction_word, 15,18);
 
-	cout<<endl<<"rd: R"<<dec<<temp_rd<<", rs1: R"<<dec<<temp_rs1<<", rs2: R"<<dec<<temp_rs2<<endl;
+	dprint(2)<<endl<<"rd: R"<<dec<<temp_rd<<", rs1: R"<<dec<<temp_rs1<<", rs2: R"<<dec<<temp_rs2<<endl;
 
 	if (temp_isRet){
 		temp_operand1 = R[15];
-		cout<<"Operand1: "<<dec<<temp_operand1<<" (Read from ra OR R15)"<<endl;
+		dprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from ra OR R15)"<<endl;
 	}
 	else{
 		temp_operand1 = R[temp_rs1];
-		cout<<"Operand1: "<<dec<<temp_operand1<<" (Read from rs1)"<<endl;
+		dprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from rs1)"<<endl;
 	}
 	
 
 	if (temp_isSt){
 		temp_operand2 = R[temp_rd];
-		cout<<"Operand2: "<<dec<<temp_operand2<<" (Read from rd)"<<endl;
+		dprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rd)"<<endl;
 	}
 	else{
 		temp_operand2 = R[temp_rs2];
-		cout<<"Operand2: "<<dec<<temp_operand2<<" (Read from rs2)"<<endl;
+		dprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rs2)"<<endl;
 	}
 
 	unsigned int temp_A = temp_operand1;
-	cout<<"A: "<<dec<<temp_A<<" (operand1)"<<endl;
+	dprint(2)<<"A: "<<dec<<temp_A<<" (operand1)"<<endl;
 
 	unsigned int temp_B;
 
 	if (temp_isImmediate){
 		temp_B = temp_immx;
-		cout<<"B: "<<dec<<temp_B<<" (immx)"<<endl;
+		dprint(2)<<"B: "<<dec<<temp_B<<" (immx)"<<endl;
 	}
 	else {
 		temp_B = temp_operand2;
-		cout<<"B: "<<dec<<temp_B<<" (operand2)"<<endl;
+		dprint(2)<<"B: "<<dec<<temp_B<<" (operand2)"<<endl;
 	}
 
 	of_ex.PC.Write(temp_PC);
@@ -603,18 +603,18 @@ void Core::decode() {
 
 //executes the ALU operation based on ALUop
 void Core::execute() {
-	cout<<endl<<"!--------- EXECUTE ---------!"<<endl<<endl;	
+	dprint(2)<<endl<<"!--------- EXECUTE ---------!"<<endl<<endl;	
 
 	bool bubble_inst = of_ex.bubble.Read();
 
 	if (bubble_inst){
-		cout<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		dprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 	
 	unsigned int temp_PC = of_ex.PC.Read();
 	unsigned int temp_instruction_word = of_ex.instruction_word.Read();
 
-	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+	dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 	unsigned int temp_branchTarget = of_ex.branchTarget.Read();
 
@@ -646,65 +646,65 @@ void Core::execute() {
 	bool temp_isMov = of_ex.isMov.Read();
 
 	//////////   Branch Unit  ///////////
-	cout<<"*** Branch Unit"<<endl;
+	dprint(2)<<"*** Branch Unit"<<endl;
 	if (temp_isRet){
 		branchPC = temp_A;
-		cout<<"branchPC: 0x"<<hex<<branchPC<<" (operand1)"<<endl;
+		dprint(2)<<"branchPC: 0x"<<hex<<branchPC<<" (operand1)"<<endl;
 	}
 	else{
 		branchPC = temp_branchTarget;
-		cout<<"branchPC: 0x"<<hex<<branchPC<<" (branchTarget)"<<endl;
+		dprint(2)<<"branchPC: 0x"<<hex<<branchPC<<" (branchTarget)"<<endl;
 	}
 	
 
 	if (temp_isUbranch){
 		isBranchTaken = true;
-		cout<<"isBranchTaken: True"<<endl;
+		dprint(2)<<"isBranchTaken: True"<<endl;
 	}
 	else if(temp_isBeq && eq) {
 		isBranchTaken = true;
-		cout<<"isBranchTaken: True"<<endl;
+		dprint(2)<<"isBranchTaken: True"<<endl;
 	}
 	else if(temp_isBgt && gt){
 		isBranchTaken = true;
-		cout<<"isBranchTaken: True"<<endl;
+		dprint(2)<<"isBranchTaken: True"<<endl;
 	}
 	else{
 		isBranchTaken = false;
-		cout<<"isBranchTaken: False"<<endl;
+		dprint(2)<<"isBranchTaken: False"<<endl;
 	}
 
 
 	//////////   ALU  ///////////
 
-	cout<<endl<<"*** ALU"<<endl;
+	dprint(2)<<endl<<"*** ALU"<<endl;
 
 	unsigned int temp_aluResult = 0;
 	
-	cout<<"A: "<<dec<<temp_A<<endl;
-	cout<<"B: "<<dec<<temp_B<<endl;
+	dprint(2)<<"A: "<<dec<<temp_A<<endl;
+	dprint(2)<<"B: "<<dec<<temp_B<<endl;
 
 
 	if (temp_isAdd){
-		cout<<"ADD operation"<<endl;
+		dprint(2)<<"ADD operation"<<endl;
 		temp_aluResult = temp_A + temp_B;
 		
 	}
 	if (temp_isSub){		
-		cout<<"SUB operation"<<endl;
+		dprint(2)<<"SUB operation"<<endl;
 		temp_aluResult = temp_A + (~temp_B) + 1;
 	}
 	if (temp_isCmp){
-		cout<<"CMP operation"<<endl;
+		dprint(2)<<"CMP operation"<<endl;
 		if (temp_A +(~temp_B)+1  == 0){
 			eq = true;
 			gt = false;
-			cout<<"Equal"<<endl;
+			dprint(2)<<"Equal"<<endl;
 		}
 		else if (inst_bitset(temp_A+(~temp_B)+1,32,32)   == 0){
 			gt = true;
 			eq = false;
-			cout<<"Greator than"<<endl;
+			dprint(2)<<"Greator than"<<endl;
 		}
 		else {
 			eq = false;
@@ -714,32 +714,32 @@ void Core::execute() {
 	}
 
 	if (temp_isMul){
-		cout<<"MUL operation"<<endl;
+		dprint(2)<<"MUL operation"<<endl;
 		temp_aluResult = (unsigned int)( (signed int)temp_A * (signed int)temp_B );
 	}
 
 	if (temp_isDiv){
-		cout<<"DIV operation"<<endl;
+		dprint(2)<<"DIV operation"<<endl;
 		temp_aluResult = (unsigned int)( (signed int)temp_A / (signed int)temp_B );
 	}
 
 	if (temp_isMod){
-		cout<<"MOD operation"<<endl;
+		dprint(2)<<"MOD operation"<<endl;
 		temp_aluResult = (unsigned int)( (signed int)temp_A % (signed int)temp_B );
 	}
 
 	if (temp_isLsl){
-		cout<<"LSL operation"<<endl;
+		dprint(2)<<"LSL operation"<<endl;
 		temp_aluResult = temp_A << temp_B;
 	}
 
 	if (temp_isLsr){
-		cout<<"LSR operation"<<endl;
+		dprint(2)<<"LSR operation"<<endl;
 		temp_aluResult = temp_A >> temp_B;
 	}
 
 	if (temp_isAsr){
-		cout<<"ASR operation"<<endl;
+		dprint(2)<<"ASR operation"<<endl;
 		temp_aluResult = temp_A;
 		unsigned int count = temp_B;
 		while(count){
@@ -756,27 +756,27 @@ void Core::execute() {
 	}
 
 	if (temp_isOr){
-		cout<<"OR operation"<<endl;
+		dprint(2)<<"OR operation"<<endl;
 		temp_aluResult = temp_A | temp_B;
 	}
 
 	// NOT implemented using 1's Complement
 	if (temp_isNot){
-		cout<<"NOT operation"<<endl;
+		dprint(2)<<"NOT operation"<<endl;
 		temp_aluResult = ~temp_B;
 	}
 
 	if (temp_isAnd){
-		cout<<"AND operation"<<endl;
+		dprint(2)<<"AND operation"<<endl;
 		temp_aluResult = temp_A & temp_B;
 	}
 
 	if (temp_isMov){
-		cout<<"MOV operation"<<endl;
+		dprint(2)<<"MOV operation"<<endl;
 		temp_aluResult = temp_B;
 	}
 
-	cout<<"aluResult: "<<dec<<temp_aluResult<<" (0x"<<hex<<temp_aluResult<<")"<<endl;
+	dprint(2)<<"aluResult: "<<dec<<temp_aluResult<<" (0x"<<hex<<temp_aluResult<<")"<<endl;
 
 	ex_ma.PC.Write(temp_PC);
 	ex_ma.instruction_word.Write(temp_instruction_word);
@@ -812,18 +812,18 @@ void Core::execute() {
 
 //perform the memory operation
 void Core::mem_access() {
-	cout<<endl<<"!--------- MEMORY ACCESS ---------!"<<endl<<endl;
+	dprint(2)<<endl<<"!--------- MEMORY ACCESS ---------!"<<endl<<endl;
 	
 	bool bubble_inst = ex_ma.bubble.Read();
 
 	if (bubble_inst){
-		cout<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		dprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 
 	unsigned int temp_PC = ex_ma.PC.Read();
 	unsigned int temp_instruction_word = ex_ma.instruction_word.Read();
 
-	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+	dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 	unsigned int temp_aluResult = ex_ma.aluResult.Read();
 	unsigned int temp_operand2 = ex_ma.operand2.Read();
@@ -856,15 +856,15 @@ void Core::mem_access() {
 	unsigned int temp_ldResult;
 
 	if (temp_isLd){
-		cout<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
+		dprint(1)<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
 		temp_ldResult = MEM.Read(temp_mar);
 	}
 	else if (temp_isSt){
-		cout<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
+		dprint(1)<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
 		MEM.Write(temp_mar,temp_mdr);
 	}
 	else {
-		cout<<"Memory unit Disabled"<<endl;
+		dprint(2)<<"Memory unit Disabled"<<endl;
 	}
 
 	ma_rw.PC.Write(temp_PC);
@@ -900,18 +900,18 @@ void Core::mem_access() {
 }
 //writes the results back to register file
 void Core::write_back() {
-	cout<<endl<<"!--------- WRITE BACK ---------!"<<endl<<endl;
+	dprint(2)<<endl<<"!--------- WRITE BACK ---------!"<<endl<<endl;
 	
 	bool bubble_inst = ma_rw.bubble.Read();
 
 	if (bubble_inst){
-		cout<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		dprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 
 	unsigned int temp_PC = ma_rw.PC.Read();
 	unsigned int temp_instruction_word = ma_rw.instruction_word.Read();
 
-	cout<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+	dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 	unsigned int temp_ldResult = ma_rw.ldResult.Read();
 	unsigned int temp_aluResult = ma_rw.aluResult.Read();
@@ -945,15 +945,15 @@ void Core::write_back() {
 
 		if (temp_isLd){
 			temp_result = temp_ldResult;
-			cout<<"Writing data "<<dec<<temp_result<<" (ldResult)";
+			dprint(1)<<"Writing data "<<dec<<temp_result<<" (ldResult)";
 		}
 		else if (temp_isCall){
 			temp_result = temp_PC + 4;
-			cout<<"Writing data "<<dec<<temp_result<<" (PC + 4)";
+			dprint(1)<<"Writing data "<<dec<<temp_result<<" (PC + 4)";
 		}
 		else {
 			temp_result = temp_aluResult;
-			cout<<"Writing data "<<dec<<temp_result<<" (aluResult)";
+			dprint(1)<<"Writing data "<<dec<<temp_result<<" (aluResult)";
 		}
 
 		if (temp_isCall){			
@@ -963,12 +963,12 @@ void Core::write_back() {
 			temp_addr = inst_bitset(temp_instruction_word,23,26);
 		}
 	
-		cout<<" to register R"<<dec<<temp_addr<<endl;
+		dprint(1)<<" to register R"<<dec<<temp_addr<<endl;
 		R[temp_addr] = temp_result;
 
 	}
 	else {
-		cout<<"Write Back Disabled"<<endl;
+		dprint(2)<<"Write Back Disabled"<<endl;
 	}
 
 }
@@ -1111,15 +1111,15 @@ bool Core::detect_data_dependency(){
 
 	if (pipeline){		
 		if (check_data_conflict(if_of, of_ex)){
-			//cout<<"Data Dependency between DECODE and EXECUTE"<<endl;
+			//dprint(2)<<"Data Dependency between DECODE and EXECUTE"<<endl;
 			isDataDependency = true;
 		}
 		else if (check_data_conflict(if_of, ex_ma)){
-			//cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			//dprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
 			isDataDependency = true;
 		}
 		else if (check_data_conflict(if_of, ma_rw)){
-			//cout<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			//dprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
 			isDataDependency = true;
 		}
 	}
