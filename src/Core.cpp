@@ -144,9 +144,9 @@ void Core::run_simplesim(){
 
 	int counter = 0;
 	while ((PC.Read() < INST_MAX) || ( pipeline && ((if_of.bubble.Read() == false) || (of_ex.bubble.Read() == false) || (ex_ma.bubble.Read() == false) || (ma_rw.bubble.Read() == false)) )){
-		dprint(1)<<"========================"<<endl;
-		dprint(1)<<"CYCLE "<<dec<<counter+1<<endl;
-		dprint(1)<<"========================"<<endl;
+		dprint(2)<<"========================"<<endl;
+		dprint(2)<<"CYCLE "<<dec<<counter+1<<endl;
+		dprint(2)<<"========================"<<endl;
 
 		fetch_begin();
 		decode();
@@ -204,7 +204,8 @@ void Core::run_simplesim(){
 			ma_rw.clock();
 		}
 
-		dprint(2)<<"New PC = 0x"<<hex<<PC.Read()<<endl<<endl;
+		dprint(2)<<"New PC = 0x"<<hex<<PC.Read()<<endl;
+		dprint(0)<<endl;
 
 		counter++;
 	}
@@ -945,15 +946,18 @@ void Core::write_back() {
 
 		if (temp_isLd){
 			temp_result = temp_ldResult;
-			dprint(1)<<"Writing data "<<dec<<temp_result<<" (ldResult)";
+			dprint(1)<<"Writing data "<<dec<<temp_result;
+			dprint(2)<<" (ldResult)";
 		}
 		else if (temp_isCall){
 			temp_result = temp_PC + 4;
-			dprint(1)<<"Writing data "<<dec<<temp_result<<" (PC + 4)";
+			dprint(1)<<"Writing data "<<dec<<temp_result;
+			dprint(2)<<" (PC + 4)";
 		}
 		else {
 			temp_result = temp_aluResult;
-			dprint(1)<<"Writing data "<<dec<<temp_result<<" (aluResult)";
+			dprint(1)<<"Writing data "<<dec<<temp_result;
+			dprint(2)<<" (aluResult)";
 		}
 
 		if (temp_isCall){			
