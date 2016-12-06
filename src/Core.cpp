@@ -23,7 +23,7 @@ using namespace std;
 
 Core::Core(): MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipeline), ma_rw(pipeline), PC(true) {
 	
-	for (unsigned int i= 0; i < MEM_CAPACITY; i+= 4){
+	for (unsigned int i= 0; i <= MEM_CAPACITY - sizeof(unsigned int); i+= 4){
 		MEM.Write(i, 0xffffffff);
 	}
 
@@ -54,7 +54,9 @@ void Core::load_program_memory(const char* file_name){
 			bool isReadInst = (line>>hex>>inst);
 
 			if (isReadAddr && isReadInst) {
-				MEM.Write(address, inst);
+				if (address >= 0 && address <= MEM_CAPACITY - sizeof(unsigned int)){
+					MEM.Write(address, inst);
+				}				
 			}
 			else {
 				// Invalid Encoding in Input MEM file
@@ -72,7 +74,7 @@ void Core::write_data_memory() {
 	ofstream out_file;
 	out_file.open("DATA_OUT.mem",ios::out | ios::trunc);
 
-  	for(int i=0; i < MEM_CAPACITY; i+= 4){
+  	for(int i=0; i <= MEM_CAPACITY - sizeof(unsigned int); i+= 4){
 	   out_file<<"0x"<<hex<<i<<" "<<"0x"<<hex<<MEM.Read(i)<<endl;
 	}
 	out_file.close();
@@ -857,11 +859,16 @@ void Core::mem_access() {
 
 	if (temp_isLd){
 		dprint(1)<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
-		temp_ldResult = MEM.Read(temp_mar);
+		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
+			temp_ldResult = MEM.Read(temp_mar);
+		}
+		
 	}
 	else if (temp_isSt){
 		dprint(1)<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
-		MEM.Write(temp_mar,temp_mdr);
+		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
+			MEM.Write(temp_mar,temp_mdr);
+		}
 	}
 	else {
 		dprint(2)<<"Memory unit Disabled"<<endl;
@@ -977,7 +984,7 @@ void Core::write_back() {
 }
 
 bool Core::checkValidPC(unsigned int testPC){
-	if (testPC >= MEM_CAPACITY){
+	if (testPC < 0 || testPC > MEM_CAPACITY - sizeof(unsigned int)){
 		return false;
 	}
 	unsigned int testInst = MEM.Read(testPC);

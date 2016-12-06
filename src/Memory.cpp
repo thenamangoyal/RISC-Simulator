@@ -29,7 +29,7 @@ Memory::Memory(unsigned int Size)
 
 unsigned int Memory::Read(unsigned int address) const
 {
-    if(address >= 0 && address < capacity)
+    if(address >= 0 && address <= capacity - sizeof(unsigned int))
     {
         unsigned int *add = (unsigned int *)(start_Add + address);
         return *add;
@@ -38,7 +38,7 @@ unsigned int Memory::Read(unsigned int address) const
 
 void Memory::Write(unsigned int address, unsigned int data)
 {
-    if(address >= 0 && address < capacity)
+    if(address >= 0 && address <= capacity - sizeof(unsigned int))
     {
         unsigned int *add = (unsigned int *)(start_Add + address);
         *add = data;
