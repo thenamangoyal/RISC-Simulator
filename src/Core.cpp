@@ -205,7 +205,7 @@ void Core::run_simplesim(){
 		}
 
 		dprint(2)<<"New PC = 0x"<<hex<<PC.Read()<<endl;
-		dprint(0)<<endl;
+		dprint(2)<<endl;
 
 		counter++;
 	}
@@ -225,7 +225,7 @@ void Core::fetch_begin() {
 	if (temp_PC < INST_MAX){
 		unsigned int temp_instruction_word = MEM.Read(temp_PC);	
 
-		dprint(1)<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
+		dprint(2)<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
 
 		if_of.instruction_word.Write(temp_instruction_word);
 		if_of.WriteBubble(false);
