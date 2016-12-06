@@ -18,6 +18,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <ctime>
 
 #include "Global.h"
@@ -41,19 +42,30 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (argc > 2){
+	if (argc >= 2){
+		ifstream input_file;
+		input_file.open(argv[1],ios::in);
+
+		if (!(input_file.good())) {
+	        cout<<"Invalid Instruction MEM file"<<endl;
+	        return 1;
+	    }
+
+		else {
+			input_file.close();
+		}
+	}
+
+	if (argc >= 3){
 		if (argv[2][0] == '1'){
 			pipeline = true;
 		}
 
 	}
 
-	if (argc > 3){
-		if (argv[3][0] == '1'){
-			debugLevel = 1;
-		}
-		else if (argv[3][0] > '1'){
-			debugLevel = 2;
+	if (argc >= 4){
+		if (argv[3][0] >= '0'){
+			debugLevel = argv[3][0] - '0';
 		}
 
 	}

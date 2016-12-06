@@ -23,9 +23,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <bitset>
-#include <climits>
 
 #include "Global.h"
 #include "Memory.h"
@@ -61,7 +58,6 @@ class Core
     protected:
     
     private:
-    	bool invalidInputFile;
     	unsigned int INST_MAX;
     	Memory MEM;	
 

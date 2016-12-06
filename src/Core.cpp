@@ -21,7 +21,7 @@
 
 using namespace std;
 
-Core::Core(): INST_MAX(0), MEM(MEM_CAPACITY), invalidInputFile(false), if_of(pipeline), of_ex(pipeline), ex_ma(pipeline), ma_rw(pipeline), PC(true) {
+Core::Core(): INST_MAX(0), MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipeline), ma_rw(pipeline), PC(true) {
 	
 	for (unsigned int i= 0; i < MEM_CAPACITY; i+= 4){
 		MEM.Write(i, 0x0);
@@ -33,44 +33,38 @@ Core::Core(): INST_MAX(0), MEM(MEM_CAPACITY), invalidInputFile(false), if_of(pip
 void Core::load_program_memory(const char* file_name){
 	ifstream inst_file;
 	inst_file.open(file_name,ios::in);
-	if(inst_file.fail()) {
-        cout<<"Invalid Input file"<<endl;
-        invalidInputFile = true;
-    }
-    else {
-    	invalidInputFile = false;
-    	if (pipeline) {
-			cout<<"Pipeline Based"<<endl;
+	
+	if (pipeline) {
+		cout<<"Pipeline Based"<<endl;
+	}
+	else {
+		cout<<"Single Cycle Based"<<endl;
+	}
+
+	string temp;
+	while(getline(inst_file, temp)){
+		if (temp[0] == '#'){
+			// Input comments
 		}
 		else {
-			cout<<"Single Cycle Based"<<endl;
-		}
+			stringstream line(temp);
+			unsigned int address;
+			unsigned int inst;
+			bool isReadAddr = (line>>hex>>address);
+			bool isReadInst = (line>>hex>>inst);
 
-    	string temp;
-		while(getline(inst_file, temp)){
-			if (temp[0] == '#'){
-				// Input comments
+			if (isReadAddr && isReadInst) {
+				MEM.Write(address, inst);
+				INST_MAX += 4;
 			}
 			else {
-				stringstream line(temp);
-				unsigned int address;
-				unsigned int inst;
-				bool isReadAddr = (line>>hex>>address);
-				bool isReadInst = (line>>hex>>inst);
-
-				if (isReadAddr && isReadInst) {
-					MEM.Write(address, inst);
-					INST_MAX += 4;
-				}
-				else {
-					// Invalid Encoding in Input MEM file
-				}
-
-				
+				// Invalid Encoding in Input MEM file
 			}
-		}
 
-    }
+			
+		}
+	}
+
 	
 	inst_file.close();
 }
@@ -210,18 +204,15 @@ void Core::run_simplesim(){
 			ma_rw.clock();
 		}
 
-		cout<<"New PC = 0x"<<hex<<PC.Read()<<endl;
-		cout<<endl;
+		cout<<"New PC = 0x"<<hex<<PC.Read()<<endl<<endl;
 
 		counter++;
 	}
-
-	if (!invalidInputFile) {
-		cout<<endl;
-		cout<<"+----------------------------------+"<<endl;
-		cout<<"Total number of cycles  are "<<dec<<counter<<endl;
-		cout<<"+----------------------------------+"<<endl;
-	}
+	
+	cout<<endl;
+	cout<<"+----------------------------------+"<<endl;
+	cout<<"Total number of cycles  are "<<dec<<counter<<endl;
+	cout<<"+----------------------------------+"<<endl;	
 
 }
 
@@ -234,7 +225,7 @@ void Core::fetch_begin() {
 		unsigned int temp_instruction_word = MEM.Read(temp_PC);	
 
 		cout<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
-		//cout<<bitset<32> (temp_instruction_word)<<" : Instruction encoding"<<endl;
+
 		if_of.instruction_word.Write(temp_instruction_word);
 		if_of.WriteBubble(false);
 		if_of.PC.Write(temp_PC);
