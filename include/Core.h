@@ -19,7 +19,6 @@ class Core
 {
     public:
     	Core(bool pipe = false);
-    	~Core();
         
 		void reset_proc();
 		void load_program_memory(const char* file_name);
@@ -46,14 +45,14 @@ class Core
     	bool invalidInputFile;
     	bool pipeline;
     	unsigned int INST_MAX;
-    	Memory* MEM;	
+    	Memory MEM;	
 
-		PipelineRegister* if_of;
-		PipelineRegister* of_ex;
-		PipelineRegister* ex_ma;
-		PipelineRegister* ma_rw;
+		PipelineRegister if_of;
+		PipelineRegister of_ex;
+		PipelineRegister ex_ma;
+		PipelineRegister ma_rw;
 
-		Register<unsigned int>* PC;
+		Register<unsigned int> PC;
         unsigned int R[16];        
         bool eq, gt;
         bool isBranchTaken;
@@ -63,7 +62,7 @@ class Core
 	private:
 		unsigned int mem_address(unsigned int data_address);
 		unsigned int inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end);		
-		bool check_data_conflict(PipelineRegister* A, PipelineRegister* B);
+		bool check_data_conflict(PipelineRegister& A, PipelineRegister& B);
 
 		bool detect_data_dependency();
 		bool detect_control_dependency();
