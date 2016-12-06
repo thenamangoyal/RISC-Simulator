@@ -21,10 +21,10 @@
 
 using namespace std;
 
-Core::Core(): INST_MAX(0), MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipeline), ma_rw(pipeline), PC(true) {
+Core::Core(): MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipeline), ma_rw(pipeline), PC(true) {
 	
 	for (unsigned int i= 0; i < MEM_CAPACITY; i+= 4){
-		MEM.Write(i, 0x0);
+		MEM.Write(i, 0xffffffff);
 	}
 
 }
@@ -55,7 +55,6 @@ void Core::load_program_memory(const char* file_name){
 
 			if (isReadAddr && isReadInst) {
 				MEM.Write(address, inst);
-				INST_MAX += 4;
 			}
 			else {
 				// Invalid Encoding in Input MEM file
@@ -117,7 +116,7 @@ void Core::reset_proc()
 	{
 		R[i] = 0;
 	}
-	R[14] = MEM_CAPACITY - INST_MAX; // Stack Pointer initialize
+	R[14] = MEM_CAPACITY; // Stack Pointer initialize
 	PC.Write(0);
 	PC.clock();
 
@@ -143,7 +142,7 @@ void Core::run_simplesim(){
 	bool isControlDependency;
 
 	int counter = 0;
-	while ((PC.Read() < INST_MAX) || ( pipeline && ((if_of.bubble.Read() == false) || (of_ex.bubble.Read() == false) || (ex_ma.bubble.Read() == false) || (ma_rw.bubble.Read() == false)) )){
+	while ( checkValidPC(PC.Read()) || ( pipeline && ((if_of.bubble.Read() == false) || (of_ex.bubble.Read() == false) || (ex_ma.bubble.Read() == false) || (ma_rw.bubble.Read() == false)) )){
 		dprint(2)<<"========================"<<endl;
 		dprint(2)<<"CYCLE "<<dec<<counter+1<<endl;
 		dprint(2)<<"========================"<<endl;
@@ -222,7 +221,7 @@ void Core::fetch_begin() {
 	dprint(2)<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 
 	unsigned int temp_PC = PC.Read();
-	if (temp_PC < INST_MAX){
+	if (checkValidPC(PC.Read())){
 		unsigned int temp_instruction_word = MEM.Read(temp_PC);	
 
 		dprint(2)<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
@@ -248,7 +247,7 @@ void Core::fetch_end() {
 	if (isBranchTaken){
 		PC.Write(branchPC);
 	}
-	else if (temp_PC < INST_MAX) {
+	else if (checkValidPC(PC.Read())) {
 		PC.Write(temp_PC + 4);
 	}
 
@@ -851,7 +850,7 @@ void Core::mem_access() {
 	bool temp_isAnd = ex_ma.isAnd.Read();
 	bool temp_isNot = ex_ma.isNot.Read();
 
-	unsigned int temp_mar = mem_address(temp_aluResult);
+	unsigned int temp_mar = temp_aluResult;
 	unsigned int temp_mdr = temp_operand2;
 
 	unsigned int temp_ldResult;
@@ -977,8 +976,18 @@ void Core::write_back() {
 
 }
 
-unsigned int Core::mem_address(unsigned int data_address){
-	return data_address + INST_MAX;
+bool Core::checkValidPC(unsigned int testPC){
+	if (testPC >= MEM_CAPACITY){
+		return false;
+	}
+	unsigned int testInst = MEM.Read(testPC);
+
+	if (inst_bitset(testInst,28, 32) < 21) {
+		return true;
+	}
+
+	return false;
+
 }
 
 unsigned int Core::inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end){

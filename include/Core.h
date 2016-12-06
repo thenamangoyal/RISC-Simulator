@@ -58,7 +58,6 @@ class Core
     protected:
     
     private:
-    	unsigned int INST_MAX;
     	Memory MEM;	
 
 		PipelineRegister if_of;
@@ -74,7 +73,7 @@ class Core
 
 
 	private:
-		unsigned int mem_address(unsigned int data_address);
+		bool checkValidPC(unsigned int testPC);
 		unsigned int inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end);		
 		bool check_data_conflict(PipelineRegister& A, PipelineRegister& B);
 
