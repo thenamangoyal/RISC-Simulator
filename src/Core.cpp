@@ -597,35 +597,35 @@ void Core::decode() {
 	if (temp_isRet){
 		temp_operand1 = R[15];
 		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from ra OR R15)"<<endl;
-		fprint(1)<<", R15 = ";
+		fprint(1)<<", R15 = 0x";
 	}
 	else{
 		temp_operand1 = R[temp_rs1];
 		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from rs1)"<<endl;
-		fprint(1)<<", R"<<dec<<temp_rs1<<" = ";
+		fprint(1)<<", R"<<dec<<temp_rs1<<" = 0x";
 	}
-	fprint(1)<<dec<<temp_operand1;
+	fprint(1)<<hex<<temp_operand1;
 	
 
 	if (temp_isSt){
 		temp_operand2 = R[temp_rd];
 		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rd)"<<endl;
 		if (!temp_isImmediate){
-			fprint(1)<<", R"<<dec<<temp_rd<<" = ";
+			fprint(1)<<", R"<<dec<<temp_rd<<" = 0x";
 		}		
 	}
 	else{
 		temp_operand2 = R[temp_rs2];
 		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rs2)"<<endl;
 		if (!temp_isImmediate){
-			fprint(1)<<", R"<<dec<<temp_rs2<<" = ";
+			fprint(1)<<", R"<<dec<<temp_rs2<<" = 0x";
 		}
 	}
 	if (!temp_isImmediate){
-		fprint(1)<<dec<<temp_operand2;
+		fprint(1)<<hex<<temp_operand2;
 	}
 	else{
-		fprint(1)<<", Imm = "<<dec<<temp_immx;
+		fprint(1)<<", Imm = 0x"<<hex<<temp_immx;
 	}	
 	
 
@@ -1060,7 +1060,7 @@ void Core::write_back() {
 	
 		//pprint(2)<<" to register R"<<dec<<temp_addr<<endl;
 		R[temp_addr] = temp_result;
-		fprint(1)<<", R"<<dec<<temp_addr<<" = "<<dec<<temp_result;
+		fprint(1)<<", R"<<dec<<temp_addr<<" = 0x"<<hex<<temp_result;
 
 	}
 	else {
