@@ -35,9 +35,9 @@ class Core
     	Core();
         
 		void reset_proc();
-		void load_program_memory(const char* file_name);
-		void write_data_memory();
-		void write_state();
+		void load_program_memory();
+		void write_memory();
+		void write_context();
 		void run_simplesim();
 
 		//reads from the instruction memory
@@ -56,7 +56,9 @@ class Core
     protected:
     
     private:
-    	Memory MEM;	
+    	Memory MEM;
+    	std::ifstream input_file;
+    	std::ofstream output_file;
 
 		PipelineRegister if_of;
 		PipelineRegister of_ex;

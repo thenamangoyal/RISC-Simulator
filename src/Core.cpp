@@ -19,6 +19,8 @@
 
 #include "Core.h"
 
+#define dprint(x) if (debugLevel >= x) output_file
+
 using namespace std;
 
 Core::Core(): MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipeline), ma_rw(pipeline), PC(true) {
@@ -30,13 +32,14 @@ Core::Core(): MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipelin
 		MEM.Write(MEM_CAPACITY - sizeof(unsigned int), 0xffffffff);
 	}
 
+	input_file.open(inputFileName , ios::in);
+	output_file.open(outputFileName, ios::out | ios::trunc);
+
 }
 
 
-void Core::load_program_memory(const char* file_name){
-	ifstream inst_file;
-	inst_file.open(file_name,ios::in);
-	
+void Core::load_program_memory(){
+		
 	if (pipeline) {
 		dprint(2)<<"Pipeline Based"<<endl;
 	}
@@ -45,7 +48,7 @@ void Core::load_program_memory(const char* file_name){
 	}
 
 	string temp;
-	while(getline(inst_file, temp)){
+	while(getline(input_file, temp)){
 		if (temp[0] == '#'){
 			// Input comments
 		}
@@ -69,52 +72,56 @@ void Core::load_program_memory(const char* file_name){
 		}
 	}
 
+	input_file.close();
 	
-	inst_file.close();
 }
 
-void Core::write_data_memory() {
-	ofstream out_file;
-	out_file.open("DATA_OUT.mem",ios::out | ios::trunc);
+void Core::write_memory() {
+	if (specifymemout){
+		ofstream data_file;
+		data_file.open(memoutFileName,ios::out | ios::trunc);
 
-  	for(int i=0; i <= MEM_CAPACITY - sizeof(unsigned int); i+= 4){
-		out_file<<"0x"<<hex<<i<<" "<<"0x"<<hex<<MEM.Read(i)<<endl;
+	  	for(int i=0; i <= MEM_CAPACITY - sizeof(unsigned int); i+= 4){
+			data_file<<"0x"<<hex<<i<<" "<<"0x"<<hex<<MEM.Read(i)<<endl;
+		}
+		if ((MEM_CAPACITY%4) != 0){
+			data_file<<"*0x"<<hex<<(MEM_CAPACITY - sizeof(unsigned int))<<" "<<"0x"<<hex<<MEM.Read(MEM_CAPACITY - sizeof(unsigned int))<<endl;
+		}
+		data_file.close();
 	}
-	if ((MEM_CAPACITY%4) != 0){
-		out_file<<"*0x"<<hex<<(MEM_CAPACITY - sizeof(unsigned int))<<" "<<"0x"<<hex<<MEM.Read(MEM_CAPACITY - sizeof(unsigned int))<<endl;
-	}
-	out_file.close();
 }
 
-void Core::write_state() {
-	ofstream out_file;
-	out_file.open("STATE_OUT.mem",ios::out | ios::trunc);
+void Core::write_context() {
+	if (specifycontextout){
+		ofstream context_file;
+		context_file.open(contextoutFileName,ios::out | ios::trunc);
 
-	out_file<<"Registers"<<endl<<endl;
+		context_file<<"Registers"<<endl<<endl;
 
-	for(int i=0; i<16; i++){
-		out_file<<"R"<<dec<<i<<" : "<<dec<<R[i]<<endl;
-	}
+		for(int i=0; i<16; i++){
+			context_file<<"R"<<dec<<i<<" : "<<dec<<R[i]<<endl;
+		}
 
-	out_file<<endl;
-	out_file<<"PC : 0x"<<hex<<PC.Read()<<endl;
-	out_file<<endl;
+		context_file<<endl;
+		context_file<<"PC : 0x"<<hex<<PC.Read()<<endl;
+		context_file<<endl;
 
-	if (eq){
-		out_file<<"Flags.eq : True"<<endl;
-	}
-	else {
-		out_file<<"Flags.eq : False"<<endl;
-	}
+		if (eq){
+			context_file<<"Flags.eq : True"<<endl;
+		}
+		else {
+			context_file<<"Flags.eq : False"<<endl;
+		}
 
-	if (gt){
-		out_file<<"Flags.gt : True"<<endl;
+		if (gt){
+			context_file<<"Flags.gt : True"<<endl;
+		}
+		else {
+			context_file<<"Flags.gt : False"<<endl;
+		}
+	  	
+		context_file.close();
 	}
-	else {
-		out_file<<"Flags.gt : False"<<endl;
-	}
-  	
-	out_file.close();
 }
 
 
@@ -220,7 +227,9 @@ void Core::run_simplesim(){
 	dprint(2)<<endl;
 	dprint(2)<<"+----------------------------------+"<<endl;
 	dprint(2)<<"Total number of cycles  are "<<dec<<counter<<endl;
-	dprint(2)<<"+----------------------------------+"<<endl;	
+	dprint(2)<<"+----------------------------------+"<<endl;
+
+	output_file.close();
 
 }
 
