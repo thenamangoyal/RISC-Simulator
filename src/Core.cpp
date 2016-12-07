@@ -19,7 +19,7 @@
 
 #include "Core.h"
 
-#define pprint(x) if (pipeline && (debugLevel >= x)) output_file
+#define //pprint(x) if (pipeline && (debugLevel >= x)) output_file
 #define fprint(x) if (!pipeline && (debugLevel >= x)) output_file
 
 using namespace std;
@@ -40,13 +40,6 @@ Core::Core(): MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipelin
 
 
 void Core::load_program_memory(){
-		
-	if (pipeline) {
-		pprint(2)<<"Pipeline Based"<<endl;
-	}
-	else {
-		pprint(2)<<"Single Cycle Based"<<endl;
-	}
 
 	string temp;
 	while(getline(input_file, temp)){
@@ -159,9 +152,9 @@ void Core::run_simplesim(){
 
 	int counter = 0;
 	while ( checkValidPC(PC.Read()) || ( pipeline && ((if_of.bubble.Read() == false) || (of_ex.bubble.Read() == false) || (ex_ma.bubble.Read() == false) || (ma_rw.bubble.Read() == false)) )){
-		pprint(2)<<"========================"<<endl;
-		pprint(2)<<"CYCLE "<<dec<<counter+1<<endl;
-		pprint(2)<<"========================"<<endl;
+		//pprint(2)<<"========================"<<endl;
+		//pprint(2)<<"CYCLE "<<dec<<counter+1<<endl;
+		//pprint(2)<<"========================"<<endl;
 
 		fprint(1)<<dec<<counter+1<<":";
 
@@ -187,13 +180,13 @@ void Core::run_simplesim(){
 
 		}
 		else if (isDataDependency && !isControlDependency){
-			pprint(2)<<endl;
-			pprint(2)<<"+-----------------------+"<<endl;
-			pprint(2)<<"|    Data Dependency    |"<<endl;
-			pprint(2)<<"| Stalling PC and IF-OF |"<<endl;
-			pprint(2)<<"|     Bubbling OF-EX    |"<<endl;
-			pprint(2)<<"+-----------------------+"<<endl;
-			pprint(2)<<endl;
+			//pprint(2)<<endl;
+			//pprint(2)<<"+-----------------------+"<<endl;
+			//pprint(2)<<"|    Data Dependency    |"<<endl;
+			//pprint(2)<<"| Stalling PC and IF-OF |"<<endl;
+			//pprint(2)<<"|     Bubbling OF-EX    |"<<endl;
+			//pprint(2)<<"+-----------------------+"<<endl;
+			//pprint(2)<<endl;
 
 			of_ex.WriteBubble(true);
 			of_ex.clock();
@@ -203,13 +196,13 @@ void Core::run_simplesim(){
 
 		}
 		else{
-			pprint(2)<<endl;
-			pprint(2)<<"+-----------------------+"<<endl;
-			pprint(2)<<"|   Control Dependency  |"<<endl;
-			pprint(2)<<"|     Bubbling IF-OF    |"<<endl;
-			pprint(2)<<"|     Bubbling OF-EX    |"<<endl;
-			pprint(2)<<"+-----------------------+"<<endl;
-			pprint(2)<<endl;
+			//pprint(2)<<endl;
+			//pprint(2)<<"+-----------------------+"<<endl;
+			//pprint(2)<<"|   Control Dependency  |"<<endl;
+			//pprint(2)<<"|     Bubbling IF-OF    |"<<endl;
+			//pprint(2)<<"|     Bubbling OF-EX    |"<<endl;
+			//pprint(2)<<"+-----------------------+"<<endl;
+			//pprint(2)<<endl;
 
 			PC.clock();
 
@@ -223,16 +216,16 @@ void Core::run_simplesim(){
 			ma_rw.clock();
 		}
 
-		pprint(2)<<"New PC = 0x"<<hex<<PC.Read()<<endl;
-		pprint(2)<<endl;
+		//pprint(2)<<"New PC = 0x"<<hex<<PC.Read()<<endl;
+		//pprint(2)<<endl;
 
 		counter++;
 	}
 	
-	pprint(2)<<endl;
-	pprint(2)<<"+----------------------------------+"<<endl;
-	pprint(2)<<"Total number of cycles  are "<<dec<<counter<<endl;
-	pprint(2)<<"+----------------------------------+"<<endl;
+	//pprint(2)<<endl;
+	//pprint(2)<<"+----------------------------------+"<<endl;
+	//pprint(2)<<"Total number of cycles  are "<<dec<<counter<<endl;
+	//pprint(2)<<"+----------------------------------+"<<endl;
 
 	output_file.close();
 
@@ -240,13 +233,13 @@ void Core::run_simplesim(){
 
 //reads from the instruction memory
 void Core::fetch_begin() {
-	pprint(2)<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
+	//pprint(2)<<endl<<"!--------- FETCH ---------!"<<endl<<endl;
 
 	unsigned int temp_PC = PC.Read();
 	if (checkValidPC(PC.Read())){
 		unsigned int temp_instruction_word = MEM.Read(temp_PC);	
 
-		pprint(2)<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
+		//pprint(2)<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
 		fprint(1)<<" PC=0x"<<hex<<temp_PC<<", 0x"<<hex<<temp_instruction_word;
 		if_of.instruction_word.Write(temp_instruction_word);
 		if_of.WriteBubble(false);
@@ -254,7 +247,7 @@ void Core::fetch_begin() {
 
 	}
 	else {
-		pprint(2)<<"Invalid PC passing Bubble Instruction"<<endl;
+		//pprint(2)<<"Invalid PC passing Bubble Instruction"<<endl;
 		if_of.WriteBubble(true);
 	}
 	
@@ -277,18 +270,18 @@ void Core::fetch_end() {
 
 //reads the instruction register, reads operand1, operand2 fromo register file, decides the operation to be performed in execute stage
 void Core::decode() {
-	pprint(2)<<endl<<"!--------- DECODE ---------!"<<endl<<endl;
+	//pprint(2)<<endl<<"!--------- DECODE ---------!"<<endl<<endl;
 
 	bool bubble_inst = if_of.bubble.Read();
 
 	if (bubble_inst){
-		pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		//pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 	
 	unsigned int temp_PC = if_of.PC.Read();
 	unsigned int temp_instruction_word = if_of.instruction_word.Read();
 
-	pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+	//pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 	bool temp_isSt;
 	bool temp_isLd;
@@ -320,10 +313,10 @@ void Core::decode() {
 	unsigned int opcode4 = inst_bitset(temp_instruction_word, 31, 31);
 	unsigned int opcode5 = inst_bitset(temp_instruction_word, 32, 32);
 	unsigned int I_bit = inst_bitset(temp_instruction_word, 27, 27);
-	pprint(2)<<"Control Signals"<<endl;
+	//pprint(2)<<"Control Signals"<<endl;
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		temp_isSt = true;
-		pprint(2)<<"isSt ";
+		//pprint(2)<<"isSt ";
 	}
 	else{
 		temp_isSt = false;
@@ -331,7 +324,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
 		temp_isLd = true;
-		pprint(2)<<"isLd ";
+		//pprint(2)<<"isLd ";
 	}
 	else{
 		temp_isLd = false;
@@ -339,7 +332,7 @@ void Core::decode() {
 	
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		temp_isBeq = true;
-		pprint(2)<<"isBeq ";
+		//pprint(2)<<"isBeq ";
 	}
 	else{
 		temp_isBeq = false;
@@ -347,7 +340,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		temp_isBgt = true;
-		pprint(2)<<"isBgt ";
+		//pprint(2)<<"isBgt ";
 	}
 	else{
 		temp_isBgt = false;
@@ -355,7 +348,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		temp_isRet = true;
-		pprint(2)<<"isRet ";
+		//pprint(2)<<"isRet ";
 	}
 	else{
 		temp_isRet = false;
@@ -363,7 +356,7 @@ void Core::decode() {
 
 	if(I_bit == 1){
 		temp_isImmediate = true;
-		pprint(2)<<"isImmediate ";
+		//pprint(2)<<"isImmediate ";
 	}
 	else{
 		temp_isImmediate = false;
@@ -371,7 +364,7 @@ void Core::decode() {
 
 	if( !(opcode5 == 1 || ( opcode5 == 0 && opcode3 == 1 && opcode1 == 1 && ( opcode4 == 1 || opcode2 == 0) ) ) 	|| 	(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1)  ){
 		temp_isWb = true;
-		pprint(2)<<"isWb ";
+		//pprint(2)<<"isWb ";
 	}
 	else{
 		temp_isWb = false;
@@ -379,7 +372,7 @@ void Core::decode() {
 
 	if( opcode5 == 1 && opcode4 == 0 && (	(opcode3 == 0 && opcode2 == 1) || (opcode3 == 1 && opcode2 == 0 && opcode1 == 0) ) 	){
 		temp_isUbranch = true;
-		pprint(2)<<"isUbranch ";
+		//pprint(2)<<"isUbranch ";
 	}
 	else{
 		temp_isUbranch = false;
@@ -387,7 +380,7 @@ void Core::decode() {
 
 	if(opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		temp_isCall = true;
-		pprint(2)<<"isCall ";
+		//pprint(2)<<"isCall ";
 	}
 	else{
 		temp_isCall = false;
@@ -395,11 +388,11 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		temp_isAdd = true;
-		pprint(2)<<"isAdd ";
+		//pprint(2)<<"isAdd ";
 	}
 	else if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1){
 		temp_isAdd = true;
-		pprint(2)<<"isAdd ";
+		//pprint(2)<<"isAdd ";
 	}
 	else{
 		temp_isAdd = false;
@@ -407,7 +400,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		temp_isSub = true;
-		pprint(2)<<"isSub ";
+		//pprint(2)<<"isSub ";
 	}
 	else{
 		temp_isSub = false;
@@ -415,7 +408,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 1){
 		temp_isCmp = true;
-		pprint(2)<<"isCmp ";
+		//pprint(2)<<"isCmp ";
 	}
 	else{
 		temp_isCmp = false;
@@ -423,7 +416,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		temp_isMul = true;
-		pprint(2)<<"isMul ";
+		//pprint(2)<<"isMul ";
 	}
 	else{
 		temp_isMul = false;
@@ -431,7 +424,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		temp_isDiv = true;
-		pprint(2)<<"isDiv ";
+		//pprint(2)<<"isDiv ";
 	}
 	else{
 		temp_isDiv = false;
@@ -439,7 +432,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		temp_isMod = true;
-		pprint(2)<<"isMod ";
+		//pprint(2)<<"isMod ";
 	}
 	else{
 		temp_isMod = false;
@@ -447,7 +440,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		temp_isLsl = true;
-		pprint(2)<<"isLsl ";
+		//pprint(2)<<"isLsl ";
 	}
 	else{
 		temp_isLsl = false;
@@ -455,7 +448,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		temp_isLsr = true;
-		pprint(2)<<"islsr ";
+		//pprint(2)<<"islsr ";
 	}
 	else{
 		temp_isLsr = false;
@@ -463,7 +456,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		temp_isAsr = true;
-		pprint(2)<<"isAsr ";
+		//pprint(2)<<"isAsr ";
 	}
 	else{
 		temp_isAsr = false;
@@ -471,7 +464,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		temp_isOr = true;
-		pprint(2)<<"isOr ";
+		//pprint(2)<<"isOr ";
 	}
 	else{
 		temp_isOr = false;
@@ -479,7 +472,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
 		temp_isAnd = true;
-		pprint(2)<<"isAnd ";
+		//pprint(2)<<"isAnd ";
 	}
 	else{
 		temp_isAnd = false;
@@ -487,7 +480,7 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		temp_isNot = true;
-		pprint(2)<<"isNot ";
+		//pprint(2)<<"isNot ";
 	}
 	else{
 		temp_isNot = false;
@@ -495,16 +488,16 @@ void Core::decode() {
 
 	if(opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		temp_isMov = true;
-		pprint(2)<<"isMov ";
+		//pprint(2)<<"isMov ";
 	}
 	else{
 		temp_isMov = false;
 	}
-	pprint(2)<<endl;
+	//pprint(2)<<endl;
 
 
 	//////////   immx calculation  ///////////
-	pprint(2)<<endl;
+	//pprint(2)<<endl;
 	unsigned int temp_imm = inst_bitset(temp_instruction_word, 1, 16);
 	unsigned int temp_u = inst_bitset(temp_instruction_word, 17, 17);
 	unsigned int temp_h = inst_bitset(temp_instruction_word, 18, 18);
@@ -518,15 +511,15 @@ void Core::decode() {
 		else{
 			temp_immx = temp_imm;
 		}
-		pprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<")"<<endl;
+		//pprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<")"<<endl;
 	}
 	else if (temp_u == 1){
 		temp_immx = temp_imm;
-		pprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") and is Unsigned"<<endl;
+		//pprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") and is Unsigned"<<endl;
 	}
 	else{
 		temp_immx = temp_imm<<16;
-		pprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") ans is High"<<endl;
+		//pprint(2)<<"Immediate is "<<dec<<temp_immx<<" (0x"<<hex<<temp_immx<<") ans is High"<<endl;
 	}
 
 
@@ -542,7 +535,7 @@ void Core::decode() {
 	}
 	
 	temp_branchTarget += temp_PC;
-	pprint(2)<<endl<<"branchTarget is 0x"<<hex<<temp_branchTarget<<endl;
+	//pprint(2)<<endl<<"branchTarget is 0x"<<hex<<temp_branchTarget<<endl;
 
 
 	//////////   Reading Register File  ///////////
@@ -552,16 +545,16 @@ void Core::decode() {
 	unsigned int temp_rs1 = inst_bitset(temp_instruction_word, 19,22);
 	unsigned int temp_rs2 = inst_bitset(temp_instruction_word, 15,18);
 
-	pprint(2)<<endl<<"rd: R"<<dec<<temp_rd<<", rs1: R"<<dec<<temp_rs1<<", rs2: R"<<dec<<temp_rs2<<endl;
+	//pprint(2)<<endl<<"rd: R"<<dec<<temp_rd<<", rs1: R"<<dec<<temp_rs1<<", rs2: R"<<dec<<temp_rs2<<endl;
 
 	if (temp_isRet){
 		temp_operand1 = R[15];
-		pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from ra OR R15)"<<endl;
+		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from ra OR R15)"<<endl;
 		fprint(1)<<", R15 = ";
 	}
 	else{
 		temp_operand1 = R[temp_rs1];
-		pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from rs1)"<<endl;
+		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from rs1)"<<endl;
 		fprint(1)<<", R"<<dec<<temp_rs1<<" = ";
 	}
 	fprint(1)<<dec<<temp_operand1;
@@ -569,14 +562,14 @@ void Core::decode() {
 
 	if (temp_isSt){
 		temp_operand2 = R[temp_rd];
-		pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rd)"<<endl;
+		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rd)"<<endl;
 		if (!temp_isImmediate){
 			fprint(1)<<", R"<<dec<<temp_rd<<" = ";
 		}		
 	}
 	else{
 		temp_operand2 = R[temp_rs2];
-		pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rs2)"<<endl;
+		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rs2)"<<endl;
 		if (!temp_isImmediate){
 			fprint(1)<<", R"<<dec<<temp_rs2<<" = ";
 		}
@@ -590,18 +583,18 @@ void Core::decode() {
 	
 
 	unsigned int temp_A = temp_operand1;
-	pprint(2)<<"A: "<<dec<<temp_A<<" (operand1)"<<endl;
+	//pprint(2)<<"A: "<<dec<<temp_A<<" (operand1)"<<endl;
 
 	unsigned int temp_B;
 
 	if (temp_isImmediate){
 		temp_B = temp_immx;
-		pprint(2)<<"B: "<<dec<<temp_B<<" (immx)"<<endl;
+		//pprint(2)<<"B: "<<dec<<temp_B<<" (immx)"<<endl;
 		
 	}
 	else {
 		temp_B = temp_operand2;
-		pprint(2)<<"B: "<<dec<<temp_B<<" (operand2)"<<endl;
+		//pprint(2)<<"B: "<<dec<<temp_B<<" (operand2)"<<endl;
 	}
 
 	of_ex.PC.Write(temp_PC);
@@ -642,18 +635,18 @@ void Core::decode() {
 
 //executes the ALU operation based on ALUop
 void Core::execute() {
-	pprint(2)<<endl<<"!--------- EXECUTE ---------!"<<endl<<endl;	
+	//pprint(2)<<endl<<"!--------- EXECUTE ---------!"<<endl<<endl;	
 
 	bool bubble_inst = of_ex.bubble.Read();
 
 	if (bubble_inst){
-		pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		//pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 	
 	unsigned int temp_PC = of_ex.PC.Read();
 	unsigned int temp_instruction_word = of_ex.instruction_word.Read();
 
-	pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+	//pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 	unsigned int temp_branchTarget = of_ex.branchTarget.Read();
 
@@ -685,65 +678,65 @@ void Core::execute() {
 	bool temp_isMov = of_ex.isMov.Read();
 
 	//////////   Branch Unit  ///////////
-	pprint(2)<<"*** Branch Unit"<<endl;
+	//pprint(2)<<"*** Branch Unit"<<endl;
 	if (temp_isRet){
 		branchPC = temp_A;
-		pprint(2)<<"branchPC: 0x"<<hex<<branchPC<<" (operand1)"<<endl;
+		//pprint(2)<<"branchPC: 0x"<<hex<<branchPC<<" (operand1)"<<endl;
 	}
 	else{
 		branchPC = temp_branchTarget;
-		pprint(2)<<"branchPC: 0x"<<hex<<branchPC<<" (branchTarget)"<<endl;
+		//pprint(2)<<"branchPC: 0x"<<hex<<branchPC<<" (branchTarget)"<<endl;
 	}
 	
 
 	if (temp_isUbranch){
 		isBranchTaken = true;
-		pprint(2)<<"isBranchTaken: True"<<endl;
+		//pprint(2)<<"isBranchTaken: True"<<endl;
 	}
 	else if(temp_isBeq && eq) {
 		isBranchTaken = true;
-		pprint(2)<<"isBranchTaken: True"<<endl;
+		//pprint(2)<<"isBranchTaken: True"<<endl;
 	}
 	else if(temp_isBgt && gt){
 		isBranchTaken = true;
-		pprint(2)<<"isBranchTaken: True"<<endl;
+		//pprint(2)<<"isBranchTaken: True"<<endl;
 	}
 	else{
 		isBranchTaken = false;
-		pprint(2)<<"isBranchTaken: False"<<endl;
+		//pprint(2)<<"isBranchTaken: False"<<endl;
 	}
 
 
 	//////////   ALU  ///////////
 
-	pprint(2)<<endl<<"*** ALU"<<endl;
+	//pprint(2)<<endl<<"*** ALU"<<endl;
 
 	unsigned int temp_aluResult = 0;
 	
-	pprint(2)<<"A: "<<dec<<temp_A<<endl;
-	pprint(2)<<"B: "<<dec<<temp_B<<endl;
+	//pprint(2)<<"A: "<<dec<<temp_A<<endl;
+	//pprint(2)<<"B: "<<dec<<temp_B<<endl;
 
 
 	if (temp_isAdd){
-		pprint(2)<<"ADD operation"<<endl;
+		//pprint(2)<<"ADD operation"<<endl;
 		temp_aluResult = temp_A + temp_B;
 		
 	}
 	if (temp_isSub){		
-		pprint(2)<<"SUB operation"<<endl;
+		//pprint(2)<<"SUB operation"<<endl;
 		temp_aluResult = temp_A + (~temp_B) + 1;
 	}
 	if (temp_isCmp){
-		pprint(2)<<"CMP operation"<<endl;
+		//pprint(2)<<"CMP operation"<<endl;
 		if (temp_A +(~temp_B)+1  == 0){
 			eq = true;
 			gt = false;
-			pprint(2)<<"Equal"<<endl;
+			//pprint(2)<<"Equal"<<endl;
 		}
 		else if (inst_bitset(temp_A+(~temp_B)+1,32,32)   == 0){
 			gt = true;
 			eq = false;
-			pprint(2)<<"Greator than"<<endl;
+			//pprint(2)<<"Greator than"<<endl;
 		}
 		else {
 			eq = false;
@@ -753,32 +746,32 @@ void Core::execute() {
 	}
 
 	if (temp_isMul){
-		pprint(2)<<"MUL operation"<<endl;
+		//pprint(2)<<"MUL operation"<<endl;
 		temp_aluResult = (unsigned int)( (signed int)temp_A * (signed int)temp_B );
 	}
 
 	if (temp_isDiv){
-		pprint(2)<<"DIV operation"<<endl;
+		//pprint(2)<<"DIV operation"<<endl;
 		temp_aluResult = (unsigned int)( (signed int)temp_A / (signed int)temp_B );
 	}
 
 	if (temp_isMod){
-		pprint(2)<<"MOD operation"<<endl;
+		//pprint(2)<<"MOD operation"<<endl;
 		temp_aluResult = (unsigned int)( (signed int)temp_A % (signed int)temp_B );
 	}
 
 	if (temp_isLsl){
-		pprint(2)<<"LSL operation"<<endl;
+		//pprint(2)<<"LSL operation"<<endl;
 		temp_aluResult = temp_A << temp_B;
 	}
 
 	if (temp_isLsr){
-		pprint(2)<<"LSR operation"<<endl;
+		//pprint(2)<<"LSR operation"<<endl;
 		temp_aluResult = temp_A >> temp_B;
 	}
 
 	if (temp_isAsr){
-		pprint(2)<<"ASR operation"<<endl;
+		//pprint(2)<<"ASR operation"<<endl;
 		temp_aluResult = temp_A;
 		unsigned int count = temp_B;
 		while(count){
@@ -795,27 +788,27 @@ void Core::execute() {
 	}
 
 	if (temp_isOr){
-		pprint(2)<<"OR operation"<<endl;
+		//pprint(2)<<"OR operation"<<endl;
 		temp_aluResult = temp_A | temp_B;
 	}
 
 	// NOT implemented using 1's Complement
 	if (temp_isNot){
-		pprint(2)<<"NOT operation"<<endl;
+		//pprint(2)<<"NOT operation"<<endl;
 		temp_aluResult = ~temp_B;
 	}
 
 	if (temp_isAnd){
-		pprint(2)<<"AND operation"<<endl;
+		//pprint(2)<<"AND operation"<<endl;
 		temp_aluResult = temp_A & temp_B;
 	}
 
 	if (temp_isMov){
-		pprint(2)<<"MOV operation"<<endl;
+		//pprint(2)<<"MOV operation"<<endl;
 		temp_aluResult = temp_B;
 	}
 
-	pprint(2)<<"aluResult: "<<dec<<temp_aluResult<<" (0x"<<hex<<temp_aluResult<<")"<<endl;
+	//pprint(2)<<"aluResult: "<<dec<<temp_aluResult<<" (0x"<<hex<<temp_aluResult<<")"<<endl;
 
 	ex_ma.PC.Write(temp_PC);
 	ex_ma.instruction_word.Write(temp_instruction_word);
@@ -852,12 +845,12 @@ void Core::execute() {
 
 //perform the memory operation
 void Core::mem_access() {
-	pprint(2)<<endl<<"!--------- MEMORY ACCESS ---------!"<<endl<<endl;
+	//pprint(2)<<endl<<"!--------- MEMORY ACCESS ---------!"<<endl<<endl;
 	
 	bool bubble_inst = ex_ma.bubble.Read();
 
 	if (bubble_inst){
-		pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		//pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 
 	unsigned int temp_PC = ex_ma.PC.Read();
@@ -895,26 +888,26 @@ void Core::mem_access() {
 	unsigned int temp_ldResult;
 
 	if (temp_isLd){
-		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		//pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
-		pprint(2)<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
+		//pprint(2)<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
 		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
 			temp_ldResult = MEM.Read(temp_mar);
 		}
 		
 	}
 	else if (temp_isSt){
-		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		//pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
-		pprint(2)<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
+		//pprint(2)<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
 		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
 			MEM.Write(temp_mar,temp_mdr);
 		}
 	}
 	else {
-		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		//pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
-		pprint(2)<<"Memory unit Disabled"<<endl;
+		//pprint(2)<<"Memory unit Disabled"<<endl;
 	}
 
 	ma_rw.PC.Write(temp_PC);
@@ -951,12 +944,12 @@ void Core::mem_access() {
 }
 //writes the results back to register file
 void Core::write_back() {
-	pprint(2)<<endl<<"!--------- WRITE BACK ---------!"<<endl<<endl;
+	//pprint(2)<<endl<<"!--------- WRITE BACK ---------!"<<endl<<endl;
 	
 	bool bubble_inst = ma_rw.bubble.Read();
 
 	if (bubble_inst){
-		pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
+		//pprint(2)<<"<<<< Pipeline Bubble >>>>"<<endl<<endl;
 	}
 
 	unsigned int temp_PC = ma_rw.PC.Read();
@@ -993,22 +986,22 @@ void Core::write_back() {
 
 	if (temp_isWb){
 
-		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		//pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 		if (temp_isLd){
 			temp_result = temp_ldResult;
-			pprint(2)<<"Writing data "<<dec<<temp_result;
-			pprint(2)<<" (ldResult)";
+			//pprint(2)<<"Writing data "<<dec<<temp_result;
+			//pprint(2)<<" (ldResult)";
 		}
 		else if (temp_isCall){
 			temp_result = temp_PC + 4;
-			pprint(2)<<"Writing data "<<dec<<temp_result;
-			pprint(2)<<" (PC + 4)";
+			//pprint(2)<<"Writing data "<<dec<<temp_result;
+			//pprint(2)<<" (PC + 4)";
 		}
 		else {
 			temp_result = temp_aluResult;
-			pprint(2)<<"Writing data "<<dec<<temp_result;
-			pprint(2)<<" (aluResult)";
+			//pprint(2)<<"Writing data "<<dec<<temp_result;
+			//pprint(2)<<" (aluResult)";
 		}
 
 		if (temp_isCall){			
@@ -1018,15 +1011,15 @@ void Core::write_back() {
 			temp_addr = inst_bitset(temp_instruction_word,23,26);
 		}
 	
-		pprint(2)<<" to register R"<<dec<<temp_addr<<endl;
+		//pprint(2)<<" to register R"<<dec<<temp_addr<<endl;
 		R[temp_addr] = temp_result;
 		fprint(1)<<", R"<<dec<<temp_addr<<" = "<<dec<<temp_result;
 
 	}
 	else {
-		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		//pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
-		pprint(2)<<"Write Back Disabled"<<endl;
+		//pprint(2)<<"Write Back Disabled"<<endl;
 	}
 	fprint(1)<<endl;
 
@@ -1257,15 +1250,15 @@ bool Core::detect_data_dependency(){
 
 	if (pipeline){		
 		if (check_data_conflict(if_of, of_ex)){
-			//pprint(2)<<"Data Dependency between DECODE and EXECUTE"<<endl;
+			////pprint(2)<<"Data Dependency between DECODE and EXECUTE"<<endl;
 			isDataDependency = true;
 		}
 		else if (check_data_conflict(if_of, ex_ma)){
-			//pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			////pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
 			isDataDependency = true;
 		}
 		else if (check_data_conflict(if_of, ma_rw)){
-			//pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			////pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
 			isDataDependency = true;
 		}
 	}
