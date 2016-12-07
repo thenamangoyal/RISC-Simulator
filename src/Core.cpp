@@ -290,7 +290,7 @@ void Core::fetch_begin() {
 		unsigned int temp_instruction_word = MEM.Read(temp_PC);	
 
 		//pprint(2)<<"Instruction 0x"<<hex<<temp_instruction_word<<" read at address 0x"<<hex<<temp_PC<<endl;
-		fprint(1)<<" PC=0x"<<hex<<temp_PC<<", 0x"<<hex<<temp_instruction_word;
+		fprint(1)<<" PC=0x"<<hex<<temp_PC<<"; "<<disassemble(temp_instruction_word);
 		if_of.instruction_word.Write(temp_instruction_word);
 		if_of.WriteBubble(false);
 		if_of.PC.Write(temp_PC);
@@ -600,12 +600,12 @@ void Core::decode() {
 	if (temp_isRet){
 		temp_operand1 = R[15];
 		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from ra OR R15)"<<endl;
-		fprint(1)<<", R15 = 0x";
+		fprint(1)<<"; R15 = 0x";
 	}
 	else{
 		temp_operand1 = R[temp_rs1];
 		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from rs1)"<<endl;
-		fprint(1)<<", R"<<dec<<temp_rs1<<" = 0x";
+		fprint(1)<<"; R"<<dec<<temp_rs1<<" = 0x";
 	}
 	fprint(1)<<hex<<temp_operand1;
 	
@@ -614,21 +614,21 @@ void Core::decode() {
 		temp_operand2 = R[temp_rd];
 		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rd)"<<endl;
 		if (!temp_isImmediate){
-			fprint(1)<<", R"<<dec<<temp_rd<<" = 0x";
+			fprint(1)<<"; R"<<dec<<temp_rd<<" = 0x";
 		}		
 	}
 	else{
 		temp_operand2 = R[temp_rs2];
 		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rs2)"<<endl;
 		if (!temp_isImmediate){
-			fprint(1)<<", R"<<dec<<temp_rs2<<" = 0x";
+			fprint(1)<<"; R"<<dec<<temp_rs2<<" = 0x";
 		}
 	}
 	if (!temp_isImmediate){
 		fprint(1)<<hex<<temp_operand2;
 	}
 	else{
-		fprint(1)<<", Imm = 0x"<<hex<<temp_immx;
+		fprint(1)<<"; Imm = 0x"<<hex<<temp_immx;
 	}	
 	
 
@@ -1063,7 +1063,7 @@ void Core::write_back() {
 	
 		//pprint(2)<<" to register R"<<dec<<temp_addr<<endl;
 		R[temp_addr] = temp_result;
-		fprint(1)<<", R"<<dec<<temp_addr<<" = 0x"<<hex<<temp_result;
+		fprint(1)<<"; R"<<dec<<temp_addr<<" = 0x"<<hex<<temp_result;
 
 	}
 	else {
@@ -1292,6 +1292,179 @@ bool Core::check_data_conflict(PipelineRegister& A, PipelineRegister& B){
 	return false;
 }
 
+string Core::disassemble (unsigned int inst_word){
+
+	string inst;
+	string modifier;
+
+	unsigned int opcode1 = inst_bitset(inst_word, 28, 28);
+	unsigned int opcode2 = inst_bitset(inst_word, 29, 29);
+	unsigned int opcode3 = inst_bitset(inst_word, 30, 30);
+	unsigned int opcode4 = inst_bitset(inst_word, 31, 31);
+	unsigned int opcode5 = inst_bitset(inst_word, 32, 32);
+	bool isImmediate = (inst_bitset(inst_word,27,27) == 1) ? true: false;
+	
+	unsigned int rd = inst_bitset(inst_word, 23, 26);
+	unsigned int rs1 = inst_bitset(inst_word, 19, 22);
+	unsigned int rs2 = inst_bitset(inst_word, 15, 18);
+
+	unsigned int mod = inst_bitset(inst_word, 17, 18);
+	unsigned int imm = inst_bitset(inst_word, 1, 16);
+	unsigned int offset = inst_bitset(inst_word, 1, 27);
+
+	if (isImmediate && mod == 1){
+		modifier = "U";
+	}
+	else if (isImmediate && mod == 2){
+		modifier = "H";
+	}
+	
+
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
+		inst = "ADD" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
+		inst = "SUB" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
+		inst = "MUL" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
+		inst = "DIV" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
+		inst = "MOD" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 1){
+		inst = "CMP" + modifier + " " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
+		inst = "AND" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
+		inst = "OR" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
+		inst = "NOT" + modifier + " " + registerstring(rd);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
+		inst = "MOV" + modifier + " " + registerstring(rd);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
+		inst = "LSL" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
+		inst = "LSR" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
+		inst = "ASR" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
+		if (isImmediate){
+			inst += ", " + sintstring(imm,16);
+		}
+		else {
+			inst += ", " + registerstring(rs2);
+		}
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 0 && opcode1 == 1){
+		inst = "NOP";
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
+		inst = "LD" + modifier + " " + registerstring(rd) + ", " + sintstring(imm,16) + "[" + registerstring(rs1)+ "]";
+	}
+	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
+		inst = "ST" + modifier + " " + registerstring(rd) + ", " + sintstring(imm,16) + "[" + registerstring(rs1)+ "]";
+	}
+	if (opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
+		inst = "BEQ <" + sintstring(offset,27) + ">";
+	}
+	if (opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
+		inst = "BGT <" + sintstring(offset,27) + ">";
+	}
+	if (opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
+		inst = "B <" + sintstring(offset,27) + ">";
+	}
+	if (opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
+		inst = "CALL <" + sintstring(offset,27) + ">";
+	}
+	if (opcode5 == 1 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
+		inst = "RET";
+	}
+	return inst;
+	
+}
+
 bool Core::detect_data_dependency(){
 
 	bool isDataDependency = false;
@@ -1318,4 +1491,39 @@ bool Core::detect_data_dependency(){
 bool Core::detect_control_dependency(){
 
 	return (pipeline && isBranchTaken);	
+}
+
+string registerstring(unsigned int a){
+	stringstream ss;
+	if (a >= 0 && a <= 13){
+		ss<<"R"<<dec<<a;
+	}
+	else if (a == 14){
+		ss<<"SP";
+	}
+	else if (a == 15){
+		ss<<"RA";
+	}
+	
+	return ss.str();
+}
+
+string sintstring(unsigned int a, int size){
+	a = (a<<(32-size))>>(32-size);
+
+	int ans;
+
+	if ((a>>(size-1)) == 1) {
+		ans = ((~a + 1)<<(32-size +1))>>(32-size +1);
+		ans = -1*ans;
+	}
+	else {
+		ans = ((a)<<(32-size +1))>>(32-size +1);
+	}
+
+	stringstream ss;
+	ss<<dec<<ans;
+	return ss.str();
+
+
 }

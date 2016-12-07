@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include <iomanip>
 
 #include "Global.h"
@@ -77,10 +78,14 @@ class Core
 		bool checkValidPC(unsigned int testPC);
 		unsigned int inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end);		
 		bool check_data_conflict(PipelineRegister& A, PipelineRegister& B);
+		std::string disassemble (unsigned int inst_word);
 
 		bool detect_data_dependency();
 		bool detect_control_dependency();
 };
+
+std::string registerstring(unsigned int a);
+std::string sintstring(unsigned int a, int size);
 
 
 #endif // CORE_H
