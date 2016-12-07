@@ -831,8 +831,6 @@ void Core::mem_access() {
 	unsigned int temp_PC = ex_ma.PC.Read();
 	unsigned int temp_instruction_word = ex_ma.instruction_word.Read();
 
-	dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
-
 	unsigned int temp_aluResult = ex_ma.aluResult.Read();
 	unsigned int temp_operand2 = ex_ma.operand2.Read();
 
@@ -864,6 +862,8 @@ void Core::mem_access() {
 	unsigned int temp_ldResult;
 
 	if (temp_isLd){
+		dprint(1)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
 		dprint(1)<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
 		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
 			temp_ldResult = MEM.Read(temp_mar);
@@ -871,12 +871,16 @@ void Core::mem_access() {
 		
 	}
 	else if (temp_isSt){
+		dprint(1)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
 		dprint(1)<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
 		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
 			MEM.Write(temp_mar,temp_mdr);
 		}
 	}
 	else {
+		dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
 		dprint(2)<<"Memory unit Disabled"<<endl;
 	}
 
@@ -924,8 +928,6 @@ void Core::write_back() {
 	unsigned int temp_PC = ma_rw.PC.Read();
 	unsigned int temp_instruction_word = ma_rw.instruction_word.Read();
 
-	dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
-
 	unsigned int temp_ldResult = ma_rw.ldResult.Read();
 	unsigned int temp_aluResult = ma_rw.aluResult.Read();
 
@@ -956,6 +958,8 @@ void Core::write_back() {
 
 	if (temp_isWb){
 
+		dprint(1)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
 		if (temp_isLd){
 			temp_result = temp_ldResult;
 			dprint(1)<<"Writing data "<<dec<<temp_result;
@@ -984,6 +988,8 @@ void Core::write_back() {
 
 	}
 	else {
+		dprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+
 		dprint(2)<<"Write Back Disabled"<<endl;
 	}
 
