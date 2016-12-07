@@ -90,12 +90,14 @@ int main(int argc, char *argv[])
 		}
 		if (token[i] == "-mem"){
 			memoutFileName = new char[token[i+1].size()];
-			strcpy(memoutFileName, token[i+1].c_str());			
+			strcpy(memoutFileName, token[i+1].c_str());
+			specifymemout = true;		
 		}
 
 		if (token[i] == "-context"){
 			contextoutFileName = new char[token[i+1].size()];
-			strcpy(contextoutFileName, token[i+1].c_str());			
+			strcpy(contextoutFileName, token[i+1].c_str());
+			specifycontextout = true;		
 		}
 
 	}
