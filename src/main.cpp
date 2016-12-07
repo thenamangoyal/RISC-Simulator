@@ -180,9 +180,11 @@ int main(int argc, char *argv[])
 void printhelp(){
 	cout<<"Help"<<endl;
 	cout<<"-h : Display Help"<<endl;
+	cout<<endl;
 	cout<<"Mandatory Arguments"<<endl;
 	cout<<"-input [Input MEM File name] : Specify Input File"<<endl;
 	cout<<"-output [Input MEM File name] : Specify Input File"<<endl;
+	cout<<endl;
 	cout<<"Optional Arguments"<<endl;
 	cout<<"-pipe : Use pipeline based processor"<<endl;
 	cout<<"-debug [0 | 1 | 2] : Specify debug level"<<endl;

@@ -44,21 +44,20 @@ For cleaning the project:
 How to execute
 --------------
 
-$./bin/sim (Input_MEM_file_path) [0 | 1] [0 | 1 | 2]
+$./bin/sim <arguments>
 
-III argument
-* Optional
-* 0 for Single Cycle Based
-* 1 for Pipeline Based
-* Default 0
+Help
+-h : Display Help
 
-IV argument
-* Optional
-* Specify level of prinitng
-* 0 for recording .print statements
-* 1 for recording accesses to Memory & updates to Register File
-* 2 for recording all signals at every cycle
-* Default 0
+Mandatory Arguments
+-input [Input MEM File name] : Specify Input File
+-output [Input MEM File name] : Specify Input File
+
+Optional Arguments
+-pipe : Use pipeline based processor
+-debug [0 | 1 | 2] : Specify debug level
+-mem [Memory_OUT File name] : Specify Memory_OUT File Name
+-context [Context_OUT File name] : Specify Context_OUT File Name
 
 
 The code generates a MEMORY_OUT i.e. the complete memory at the termination of program 
