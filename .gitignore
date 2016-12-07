@@ -28,6 +28,4 @@
 *.out
 *.app
 
-output
-DATA_OUT.mem
-STATE_OUT.mem
+output/

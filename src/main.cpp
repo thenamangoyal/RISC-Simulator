@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
 	if (test_input_file.fail()) {
 		cout<<"Invalid Input file"<<endl;
-		cout<<"Use -h for help"<<endl;
+		printhelp();
 		return 1;
 	}
 	else {
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
 	if (test_output_file.fail()) {
 		cout<<"Error opening Output file"<<endl;
-		cout<<"Use -h for help"<<endl;
+		printhelp();
 		return 1;
 	}
 	else {
