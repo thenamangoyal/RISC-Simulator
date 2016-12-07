@@ -895,18 +895,18 @@ void Core::mem_access() {
 	unsigned int temp_ldResult;
 
 	if (temp_isLd){
-		pprint(1)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
-		pprint(1)<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
+		pprint(2)<<"Reading from Memory at address 0x"<<hex<<temp_aluResult<<endl;
 		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
 			temp_ldResult = MEM.Read(temp_mar);
 		}
 		
 	}
 	else if (temp_isSt){
-		pprint(1)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
-		pprint(1)<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
+		pprint(2)<<"Writing to Memory at address 0x"<<hex<<temp_aluResult<<" with data "<<dec<<temp_mdr<<endl;
 		if (temp_mar >= 0 && temp_mar <= MEM_CAPACITY - sizeof(unsigned int)){
 			MEM.Write(temp_mar,temp_mdr);
 		}
@@ -993,21 +993,21 @@ void Core::write_back() {
 
 	if (temp_isWb){
 
-		pprint(1)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
+		pprint(2)<<"Exceuting Instruction 0x"<<hex<<temp_instruction_word<<" with PC 0x"<<temp_PC<<endl;
 
 		if (temp_isLd){
 			temp_result = temp_ldResult;
-			pprint(1)<<"Writing data "<<dec<<temp_result;
+			pprint(2)<<"Writing data "<<dec<<temp_result;
 			pprint(2)<<" (ldResult)";
 		}
 		else if (temp_isCall){
 			temp_result = temp_PC + 4;
-			pprint(1)<<"Writing data "<<dec<<temp_result;
+			pprint(2)<<"Writing data "<<dec<<temp_result;
 			pprint(2)<<" (PC + 4)";
 		}
 		else {
 			temp_result = temp_aluResult;
-			pprint(1)<<"Writing data "<<dec<<temp_result;
+			pprint(2)<<"Writing data "<<dec<<temp_result;
 			pprint(2)<<" (aluResult)";
 		}
 
@@ -1018,7 +1018,7 @@ void Core::write_back() {
 			temp_addr = inst_bitset(temp_instruction_word,23,26);
 		}
 	
-		pprint(1)<<" to register R"<<dec<<temp_addr<<endl;
+		pprint(2)<<" to register R"<<dec<<temp_addr<<endl;
 		R[temp_addr] = temp_result;
 		fprint(1)<<", R"<<dec<<temp_addr<<" = "<<dec<<temp_result;
 
