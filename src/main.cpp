@@ -183,7 +183,7 @@ void printhelp(){
 	cout<<endl;
 	cout<<"Mandatory Arguments"<<endl;
 	cout<<"-input [Input MEM File name] : Specify Input File"<<endl;
-	cout<<"-output [Input MEM File name] : Specify Input File"<<endl;
+	cout<<"-output [Input MEM File name] : Specify Output File"<<endl;
 	cout<<endl;
 	cout<<"Optional Arguments"<<endl;
 	cout<<"-pipe : Use pipeline based processor"<<endl;

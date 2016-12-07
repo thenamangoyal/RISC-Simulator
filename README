@@ -51,7 +51,7 @@ Help
 
 Mandatory Arguments
 -input [Input MEM File name] : Specify Input File
--output [Input MEM File name] : Specify Input File
+-output [Input MEM File name] : Specify Ouput File
 
 Optional Arguments
 -pipe : Use pipeline based processor
