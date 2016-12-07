@@ -264,7 +264,7 @@ void Core::run_simplesim(){
 		//pprint(2)<<endl;
 
 		fprint(2)<<endl;
-		pprint(2)<<endl;
+		pprint(1)<<endl;
 
 		counter++;
 	}

@@ -55,7 +55,7 @@ Mandatory Arguments
 
 Optional Arguments
 -pipe : Use pipeline based processor
--debug [0 | 1 | 2] : Specify debug level
+-debug [1 | 2] : Specify debug level
 -mem [Memory_OUT File name] : Specify Memory_OUT File Name
 -context [Context_OUT File name] : Specify Context_OUT File Name
 
