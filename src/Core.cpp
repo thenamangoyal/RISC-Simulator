@@ -19,7 +19,7 @@
 
 #include "Core.h"
 
-#define //pprint(x) if (pipeline && (debugLevel >= x)) output_file
+#define pprint(x) if (pipeline && (debugLevel >= x)) output_file
 #define fprint(x) if (!pipeline && (debugLevel >= x)) output_file
 
 using namespace std;
@@ -150,6 +150,10 @@ void Core::run_simplesim(){
 	bool isDataDependency;
 	bool isControlDependency;
 
+	pprint(1)<<"+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+"<<endl;
+	pprint(1)<<"| CYCLE  | FETCH  | DECODE | EXECUT | MEMORY | WRITE  |   R0   |   R1   |   R2   |   R3   |   R4   |   R5   |   R6   |   R7   |   R8   |   R9   |  R10   |  R11   |  R12   |  R13   |   SP   |   RA   |"<<endl;
+	pprint(1)<<"+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+"<<endl;
+
 	int counter = 0;
 	while ( checkValidPC(PC.Read()) || ( pipeline && ((if_of.bubble.Read() == false) || (of_ex.bubble.Read() == false) || (ex_ma.bubble.Read() == false) || (ma_rw.bubble.Read() == false)) )){
 		//pprint(2)<<"========================"<<endl;
@@ -157,6 +161,46 @@ void Core::run_simplesim(){
 		//pprint(2)<<"========================"<<endl;
 
 		fprint(1)<<dec<<counter+1<<":";
+		pprint(1)<<"|"<<right<<dec<<setw(7)<<counter+1<<" |";
+
+		if (checkValidPC(PC.Read())) {
+			pprint(1)<<" I"<<left<<dec<<setw(6)<<((PC.Read())/4 + 1)<<"|";
+		}
+		else {
+			pprint(1)<<"  ....  |";
+		}
+
+		if (if_of.bubble.Read()){
+			pprint(1)<<"  ....  |";
+		}
+		else {
+			pprint(1)<<" I"<<left<<dec<<setw(6)<<((if_of.PC.Read())/4 + 1)<<"|";
+		}
+
+		if (of_ex.bubble.Read()){
+			pprint(1)<<"  ....  |";
+		}
+		else {
+			pprint(1)<<" I"<<left<<dec<<setw(6)<<((of_ex.PC.Read())/4 + 1)<<"|";
+		}
+		
+		if (ex_ma.bubble.Read()){
+			pprint(1)<<"  ....  |";
+		}
+		else {
+			pprint(1)<<" I"<<left<<dec<<setw(6)<<((ex_ma.PC.Read())/4 + 1)<<"|";
+		}
+
+		if (ma_rw.bubble.Read()){
+			pprint(1)<<"  ....  |";
+		}
+		else {
+			pprint(1)<<" I"<<left<<dec<<setw(6)<<((ma_rw.PC.Read())/4 + 1)<<"|";
+		}
+
+		for (int k = 0; k< 16 ; k++){
+			pprint(1)<<right<<hex<<setw(8)<<R[k]<<"|";
+		}
 
 		fetch_begin();
 		decode();
@@ -218,6 +262,9 @@ void Core::run_simplesim(){
 
 		//pprint(2)<<"New PC = 0x"<<hex<<PC.Read()<<endl;
 		//pprint(2)<<endl;
+
+		fprint(2)<<endl;
+		pprint(2)<<endl;
 
 		counter++;
 	}
@@ -1096,8 +1143,6 @@ void Core::write_back() {
 	if (isBranchTaken) {
 		fprint(2)<<"    isBranchTaken branchPC=0x"<<hex<<branchPC<<endl;
 	}
-
-	fprint(2)<<endl;
 
 
 }
