@@ -26,6 +26,9 @@ Core::Core(): MEM(MEM_CAPACITY), if_of(pipeline), of_ex(pipeline), ex_ma(pipelin
 	for (unsigned int i= 0; i <= MEM_CAPACITY - sizeof(unsigned int); i+= 4){
 		MEM.Write(i, 0xffffffff);
 	}
+	if ((MEM_CAPACITY%4) != 0){
+		MEM.Write(MEM_CAPACITY - sizeof(unsigned int), 0xffffffff);
+	}
 
 }
 
@@ -75,7 +78,10 @@ void Core::write_data_memory() {
 	out_file.open("DATA_OUT.mem",ios::out | ios::trunc);
 
   	for(int i=0; i <= MEM_CAPACITY - sizeof(unsigned int); i+= 4){
-	   out_file<<"0x"<<hex<<i<<" "<<"0x"<<hex<<MEM.Read(i)<<endl;
+		out_file<<"0x"<<hex<<i<<" "<<"0x"<<hex<<MEM.Read(i)<<endl;
+	}
+	if ((MEM_CAPACITY%4) != 0){
+		out_file<<"*0x"<<hex<<(MEM_CAPACITY - sizeof(unsigned int))<<" "<<"0x"<<hex<<MEM.Read(MEM_CAPACITY - sizeof(unsigned int))<<endl;
 	}
 	out_file.close();
 }
