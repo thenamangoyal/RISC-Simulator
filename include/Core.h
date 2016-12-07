@@ -29,8 +29,6 @@
 #include "Register.h"
 #include "PipelineRegister.h"
 
-#define dprint(x) if (debugLevel >= x) std::cout
-
 class Core
 {
     public:
