@@ -1030,7 +1030,7 @@ void Core::write_back() {
 	}
 	fprint(1)<<endl;
 
-	fprint(2)<<"  ";
+	fprint(2)<<"   ";
 	if (temp_isSt) {
 	fprint(2)<<" isSt";
 	}
@@ -1098,9 +1098,12 @@ void Core::write_back() {
 		fprint(2)<<" isMov";
 	}
 
+	fprint(2)<<endl;
+
 	if (isBranchTaken) {
-		fprint(2)<<" isBranchTaken branchPC=0x"<<hex<<branchPC;
+		fprint(2)<<"    isBranchTaken branchPC=0x"<<hex<<branchPC<<endl;
 	}
+
 	fprint(2)<<endl;
 
 
