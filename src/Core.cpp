@@ -1294,6 +1294,9 @@ bool Core::check_data_conflict(PipelineRegister& A, PipelineRegister& B){
 
 string Core::disassemble (unsigned int inst_word){
 
+	// Label specified as relative signed integer with respect to PC in <>
+	// Example <-2> as label means label points to 2 instructions up from current instruction
+
 	string inst;
 	string modifier;
 

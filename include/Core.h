@@ -84,8 +84,13 @@ class Core
 		bool detect_control_dependency();
 };
 
+//Convert Register Number from int to string
 std::string registerstring(unsigned int a);
+
+//Convert integer to signed string based on bit size
 std::string sintstring(unsigned int a, int size);
+
+//Convert integer to hex string
 std::string hexstring(unsigned int a);
 
 
