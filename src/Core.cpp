@@ -1323,7 +1323,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		inst = "ADD" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1332,7 +1332,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		inst = "SUB" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1341,7 +1341,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		inst = "MUL" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1350,7 +1350,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		inst = "DIV" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1359,7 +1359,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		inst = "MOD" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1368,7 +1368,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 0 && opcode1 == 1){
 		inst = "CMP" + modifier + " " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1377,7 +1377,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
 		inst = "AND" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1386,7 +1386,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 0 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
 		inst = "OR" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1395,7 +1395,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		inst = "NOT" + modifier + " " + registerstring(rd);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1404,7 +1404,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 0 && opcode1 == 1){
 		inst = "MOV" + modifier + " " + registerstring(rd);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1413,7 +1413,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 0){
 		inst = "LSL" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1422,7 +1422,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 0 && opcode2 == 1 && opcode1 == 1){
 		inst = "LSR" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1431,7 +1431,7 @@ string Core::disassemble (unsigned int inst_word){
 	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 0 && opcode1 == 0){
 		inst = "ASR" + modifier + " " + registerstring(rd) + ", " + registerstring(rs1);
 		if (isImmediate){
-			inst += ", " + sintstring(imm,16);
+			inst += ", " + hexstring(imm);
 		}
 		else {
 			inst += ", " + registerstring(rs2);
@@ -1441,10 +1441,10 @@ string Core::disassemble (unsigned int inst_word){
 		inst = "NOP";
 	}
 	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 0){
-		inst = "LD" + modifier + " " + registerstring(rd) + ", " + sintstring(imm,16) + "[" + registerstring(rs1)+ "]";
+		inst = "LD" + modifier + " " + registerstring(rd) + ", " + hexstring(imm) + "[" + registerstring(rs1)+ "]";
 	}
 	if (opcode5 == 0 && opcode4 == 1 && opcode3 == 1 && opcode2 == 1 && opcode1 == 1){
-		inst = "ST" + modifier + " " + registerstring(rd) + ", " + sintstring(imm,16) + "[" + registerstring(rs1)+ "]";
+		inst = "ST" + modifier + " " + registerstring(rd) + ", " + hexstring(imm) + "[" + registerstring(rs1)+ "]";
 	}
 	if (opcode5 == 1 && opcode4 == 0 && opcode3 == 0 && opcode2 == 0 && opcode1 == 0){
 		inst = "BEQ <" + sintstring(offset,27) + ">";
