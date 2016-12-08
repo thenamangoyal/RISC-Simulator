@@ -151,7 +151,7 @@ void Core::run_simplesim(){
 	bool isControlDependency;
 
 	pprint(1)<<"+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+"<<endl;
-	pprint(1)<<"| CYCLE  | FETCH  | DECODE | EXECUT | MEMORY | WRITE  |   R0   |   R1   |   R2   |   R3   |   R4   |   R5   |   R6   |   R7   |   R8   |   R9   |  R10   |  R11   |  R12   |  R13   |   SP   |   RA   |"<<endl;
+	pprint(1)<<"| CYCLE  | FETCH  | DECODE | EXECUT | MEMORY | WRITE  |   r0   |   r1   |   r2   |   r3   |   r4   |   r5   |   r6   |   r7   |   r8   |   r9   |  r10   |  r11   |  r12   |  r13   |   sp   |   ra   |"<<endl;
 	pprint(1)<<"+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+"<<endl;
 
 	int counter = 0;
@@ -600,12 +600,12 @@ void Core::decode() {
 	if (temp_isRet){
 		temp_operand1 = R[15];
 		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from ra OR R15)"<<endl;
-		fprint(1)<<"; R15 = 0x";
+		fprint(1)<<"; "<<registerstring(15)<<" = 0x";
 	}
 	else{
 		temp_operand1 = R[temp_rs1];
 		//pprint(2)<<"Operand1: "<<dec<<temp_operand1<<" (Read from rs1)"<<endl;
-		fprint(1)<<"; R"<<dec<<temp_rs1<<" = 0x";
+		fprint(1)<<"; "<<registerstring(temp_rs1)<<" = 0x";
 	}
 	fprint(1)<<hex<<temp_operand1;
 	
@@ -614,14 +614,14 @@ void Core::decode() {
 		temp_operand2 = R[temp_rd];
 		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rd)"<<endl;
 		if (!temp_isImmediate){
-			fprint(1)<<"; R"<<dec<<temp_rd<<" = 0x";
+			fprint(1)<<"; "<<registerstring(temp_rd)<<" = 0x";
 		}		
 	}
 	else{
 		temp_operand2 = R[temp_rs2];
 		//pprint(2)<<"Operand2: "<<dec<<temp_operand2<<" (Read from rs2)"<<endl;
 		if (!temp_isImmediate){
-			fprint(1)<<"; R"<<dec<<temp_rs2<<" = 0x";
+			fprint(1)<<"; "<<registerstring(temp_rs2)<<" = 0x";
 		}
 	}
 	if (!temp_isImmediate){
@@ -1063,7 +1063,7 @@ void Core::write_back() {
 	
 		//pprint(2)<<" to register R"<<dec<<temp_addr<<endl;
 		R[temp_addr] = temp_result;
-		fprint(1)<<"; R"<<dec<<temp_addr<<" = 0x"<<hex<<temp_result;
+		fprint(1)<<"; "<<registerstring(temp_addr)<<" = 0x"<<hex<<temp_result;
 
 	}
 	else {
@@ -1496,13 +1496,13 @@ bool Core::detect_control_dependency(){
 string registerstring(unsigned int a){
 	stringstream ss;
 	if (a >= 0 && a <= 13){
-		ss<<"R"<<dec<<a;
+		ss<<"r"<<dec<<a;
 	}
 	else if (a == 14){
-		ss<<"SP";
+		ss<<"sp";
 	}
 	else if (a == 15){
-		ss<<"RA";
+		ss<<"ra";
 	}
 	
 	return ss.str();
@@ -1526,4 +1526,10 @@ string sintstring(unsigned int a, int size){
 	return ss.str();
 
 
+}
+
+string hexstring(unsigned int a){
+	stringstream ss;
+	ss<<"0x"<<hex<<a;
+	return ss.str();
 }

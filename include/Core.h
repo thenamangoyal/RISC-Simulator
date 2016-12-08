@@ -86,6 +86,7 @@ class Core
 
 std::string registerstring(unsigned int a);
 std::string sintstring(unsigned int a, int size);
+std::string hexstring(unsigned int a);
 
 
 #endif // CORE_H
