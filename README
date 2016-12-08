@@ -59,9 +59,16 @@ Optional Arguments
 -mem [Memory_OUT File name] : Specify Memory_OUT File Name
 -context [Context_OUT File name] : Specify Context_OUT File Name
 
+Note
+----
 
-The code generates a MEMORY_OUT i.e. the complete memory at the termination of program 
-and a CONTEXT_OUT i.e. complete context of processor at the termination of program.
+*Memory_OUT is the complete memory file at the termination of program 
+*Context_OUT is the complete context of processor (Register Values, Flags, PC) at the termination of program.
+*Please disable word wrap to see output.
+*In pipeline based version the register values  are taken at begining of each cycle and displayed in hex.
+*In functional based version Labels specified as relative signed integer with respect to PC in <>
+ Example <-2> as label means label points to 2 instructions up from current instruction
+
 
 The output contains instruction by instruction work done in each cycle in all stages namely -
 
