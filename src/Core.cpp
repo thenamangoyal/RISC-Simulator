@@ -628,7 +628,7 @@ void Core::decode() {
 		fprint(1)<<hex<<temp_operand2;
 	}
 	else{
-		fprint(1)<<"; Imm = 0x"<<hex<<temp_immx;
+		fprint(1)<<"; imm = 0x"<<hex<<temp_immx;
 	}	
 	
 
