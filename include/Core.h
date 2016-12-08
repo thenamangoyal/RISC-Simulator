@@ -78,20 +78,21 @@ class Core
 		bool checkValidPC(unsigned int testPC);
 		unsigned int inst_bitset(unsigned int inst_word, unsigned int start, unsigned int end);		
 		bool check_data_conflict(PipelineRegister& A, PipelineRegister& B);
-		std::string disassemble (unsigned int inst_word);
+		
 
 		bool detect_data_dependency();
 		bool detect_control_dependency();
+
+		//Disassemble encoded instruction to instruction string
+		std::string disassemble (unsigned int inst_word);
+		//Convert Register Number from int to string
+		std::string registerstring(unsigned int a);
+		//Convert integer to signed string based on bit size
+		std::string sintstring(unsigned int a, int size);
+		//Convert integer to hex string
+		std::string hexstring(unsigned int a);
 };
 
-//Convert Register Number from int to string
-std::string registerstring(unsigned int a);
-
-//Convert integer to signed string based on bit size
-std::string sintstring(unsigned int a, int size);
-
-//Convert integer to hex string
-std::string hexstring(unsigned int a);
 
 
 #endif // CORE_H

@@ -1300,6 +1300,34 @@ bool Core::check_data_conflict(PipelineRegister& A, PipelineRegister& B){
 	return false;
 }
 
+bool Core::detect_data_dependency(){
+
+	bool isDataDependency = false;
+
+	if (pipeline){		
+		if (check_data_conflict(if_of, of_ex)){
+			////pprint(2)<<"Data Dependency between DECODE and EXECUTE"<<endl;
+			isDataDependency = true;
+		}
+		else if (check_data_conflict(if_of, ex_ma)){
+			////pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			isDataDependency = true;
+		}
+		else if (check_data_conflict(if_of, ma_rw)){
+			////pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
+			isDataDependency = true;
+		}
+	}
+
+	return isDataDependency;
+
+}
+
+bool Core::detect_control_dependency(){
+
+	return (pipeline && isBranchTaken);	
+}
+
 string Core::disassemble (unsigned int inst_word){
 
 	// Label specified as relative signed integer with respect to PC in <>
@@ -1476,35 +1504,7 @@ string Core::disassemble (unsigned int inst_word){
 	
 }
 
-bool Core::detect_data_dependency(){
-
-	bool isDataDependency = false;
-
-	if (pipeline){		
-		if (check_data_conflict(if_of, of_ex)){
-			////pprint(2)<<"Data Dependency between DECODE and EXECUTE"<<endl;
-			isDataDependency = true;
-		}
-		else if (check_data_conflict(if_of, ex_ma)){
-			////pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
-			isDataDependency = true;
-		}
-		else if (check_data_conflict(if_of, ma_rw)){
-			////pprint(2)<<"Data Dependency between DECODE and MEMORY ACCESS"<<endl;
-			isDataDependency = true;
-		}
-	}
-
-	return isDataDependency;
-
-}
-
-bool Core::detect_control_dependency(){
-
-	return (pipeline && isBranchTaken);	
-}
-
-string registerstring(unsigned int a){
+string Core::registerstring(unsigned int a){
 	stringstream ss;
 	if (a >= 0 && a <= 13){
 		ss<<"r"<<dec<<a;
@@ -1519,7 +1519,7 @@ string registerstring(unsigned int a){
 	return ss.str();
 }
 
-string sintstring(unsigned int a, int size){
+string Core::sintstring(unsigned int a, int size){
 	a = (a<<(32-size))>>(32-size);
 
 	int ans;
@@ -1539,7 +1539,7 @@ string sintstring(unsigned int a, int size){
 
 }
 
-string hexstring(unsigned int a){
+string Core::hexstring(unsigned int a){
 	stringstream ss;
 	ss<<"0x"<<hex<<a;
 	return ss.str();
