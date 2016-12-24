@@ -1,5 +1,5 @@
 =========================================================================
-Functional & Pipeline Simulator for simpleRISC processor (RISC-Simulator)
+RISC-Simulator: Functional & Pipeline Simulator for simple RISC processor 
 =========================================================================
 
 README
@@ -15,11 +15,11 @@ Design Doc:
 
 To design a Simple RISC Simulator in C++.
 
-For undersatnding of Simple RISC Language refer to "Computer Organisation and Architecture" book by Dr. Sarangi, IITD. Link http://www.cse.iitd.ac.in/~srsarangi/archbooksoft.html
+For understanding of Simple RISC Language refer to "Computer Organisation and Architecture" book by Dr. Sarangi, IITD. Link http://www.cse.iitd.ac.in/~srsarangi/archbooksoft.html
 
 FLOW DIAGRAM
 
-                            Assembler*[2]                           RISC-Simlator*[4]
+                            Assembler*[2]                           RISC-Simulator*[4]
 Simple RISC Program*[1]  ------------------->  Inst MEM file*[3] ---------------------->  Simulated Output*[5]
 
 
@@ -27,15 +27,15 @@ Simple RISC Program*[1]  ------------------->  Inst MEM file*[3] ---------------
      You may find sample assembly program at https://github.com/goyal-naman/architecture/tree/master/AssemblyPrograms
      [Usage Guide]: Use as input to Assembler.
 
-*[2] Assembler: Converts assemby program to Inst MEM file.
+*[2] Assembler: Converts assembly program to Inst MEM file.
      Use the Assembler designed by Dr. Neeraj Goel, IIT-RPR. Link https://drive.google.com/open?id=0B1ifefwDdR5UdjZjS1locVhBSFk
      [Usage Guide]: Download and extract the tgz file from the link provide. Then refer to its Readme.
      
-*[3] Inst MEM file: Encoded assembly instructions in hex. Generated as Assembler Ouput.
+*[3] Inst MEM file: Encoded assembly instructions in hex. Generated as Assembler Output.
      You may find sample Inst MEM file in "test" folder of this project/repository
      [Usage Guide]: Use as input to RISC-Simulator
 
-*[4] RISC-Simlator: This project/repository
+*[4] RISC-Simulator: This project/repository
 
 *[5] Simulated Output: Output of this project based on passed arguments. Refer to "How to execute" section for more
 
@@ -81,7 +81,7 @@ Help
 
 Mandatory Arguments
 -input [Input MEM File name] : Specify Input File
--output [Input MEM File name] : Specify Ouput File
+-output [Input MEM File name] : Specify Output File
 
 Optional Arguments
 -pipe : Use pipeline based processor
@@ -95,7 +95,7 @@ Note
 *Memory_OUT is the complete memory file at the termination of program 
 *Context_OUT is the complete context of processor (Register Values, Flags, PC) at the termination of program.
 *Please disable word wrap to see output.
-*In pipeline based version the register values are taken at begining of each cycle and displayed in hex.
+*In pipeline based version the register values are taken at beginning of each cycle and displayed in hex.
 *In functional based version Labels specified as relative signed integer with respect to PC in <>
  Example <-2> as label means label points to 2 instructions up from current instruction
 
