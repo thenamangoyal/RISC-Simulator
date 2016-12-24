@@ -23,18 +23,21 @@ FLOW DIAGRAM
 Simple RISC Program*[1]  ------------------->  Inst MEM file*[3] ---------------------->  Simulated Output*[5]
 
 
-*[1] Simple RISC Program: An assembly program in Simple RISC language. Use as input to Assembler. 
+*[1] Simple RISC Program: An assembly program in Simple RISC language.
      You may find sample assembly program at https://github.com/goyal-naman/architecture/tree/master/AssemblyPrograms
+     [Usage Guide]: Use as input to Assembler.
 
 *[2] Assembler: Converts assemby program to Inst MEM file.
      Use the Assembler designed by Dr. Neeraj Goel, IIT-RPR. Link https://drive.google.com/open?id=0B1ifefwDdR5UdjZjS1locVhBSFk
-
-*[3] Inst MEM file: Encoded assembly instructions in hex. Generated as Assembler Ouput. Use as input to RISC-Simulator
+     [Usage Guide]: Download and extract the tgz file from the link provide. Then refer to its Readme.
+     
+*[3] Inst MEM file: Encoded assembly instructions in hex. Generated as Assembler Ouput.
      You may find sample Inst MEM file in "test" folder of this project/repository
+     [Usage Guide]: Use as input to RISC-Simulator
 
 *[4] RISC-Simlator: This project/repository
 
-*[5] Simulated Output: Output of this project based on passed arguments. (Refer to How to execute section for more)
+*[5] Simulated Output: Output of this project based on passed arguments. Refer to "How to execute" section for more
 
 Directory Structure:
 --------------------
@@ -92,7 +95,7 @@ Note
 *Memory_OUT is the complete memory file at the termination of program 
 *Context_OUT is the complete context of processor (Register Values, Flags, PC) at the termination of program.
 *Please disable word wrap to see output.
-*In pipeline based version the register values  are taken at begining of each cycle and displayed in hex.
+*In pipeline based version the register values are taken at begining of each cycle and displayed in hex.
 *In functional based version Labels specified as relative signed integer with respect to PC in <>
  Example <-2> as label means label points to 2 instructions up from current instruction
 
