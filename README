@@ -61,7 +61,7 @@ CSL211-Project
       |- simple_add.mem
       |- fib.mem
       |- array_add.mem
-      |- assign4.mem
+      |- functioncall.mem
 
 How to build
 ------------
@@ -81,8 +81,8 @@ $./bin/sim <arguments>
 $./bin/sim -input test/simple_add.mem -output out.txt -debug 2
 Use "simple_add.mem" as input and generate output in "out.txt" using functional debug level 2
 
-$./bin/sim -input test/assign4.mem -output out.txt -debug 1 -pipe 
-Use "assign4.mem" as input and generate output in "out.txt" using pipeline debug level 1
+$./bin/sim -input test/functioncall.mem -output out.txt -debug 1 -pipe -context context.txt
+Use "functioncall.mem" as input and generate output in "out.txt" using pipeline debug level 1 and context of program in "context.txt"
 
 { <arguments> }
 
