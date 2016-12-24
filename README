@@ -19,11 +19,11 @@ For understanding Simple RISC Language refer "Computer Organisation and Architec
 
 FLOW DIAGRAM
 
-                            Assembler*[2]                           RISC-Simulator*[4]
-Simple RISC Program*[1]  ------------------->  Inst MEM file*[3] ---------------------->  Simulated Output*[5]
+                       Assembler*[2]                        RISC-Simulator*[4]
+Assembly Program*[1] -----------------> Inst MEM file*[3] ----------------------> Simulated Output*[5]
 
 
-*[1] Simple RISC Program: An assembly program in Simple RISC language.
+*[1] Assembly Program: An assembly program in Simple RISC language.
      You may find sample assembly program at https://github.com/goyal-naman/architecture/tree/master/AssemblyPrograms
      [Usage Guide]: Use as input to Assembler.
 
