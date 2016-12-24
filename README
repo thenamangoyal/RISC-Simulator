@@ -76,6 +76,16 @@ How to execute
 
 $./bin/sim <arguments>
 
+{ Example }
+
+$./bin/sim -input test/simple_add.mem -output out.txt -debug 2
+Use "simple_add.mem" as input and generate output in "out.txt" using functional debug level 2
+
+$./bin/sim -input test/assign4.mem -output out.txt -debug 1 -pipe 
+Use "assign4.mem" as input and generate output in "out.txt" using pipeline debug level 1
+
+{ <arguments> }
+
 Help
 -h : Display Help
 
