@@ -24,7 +24,7 @@ Assembly Program*[1] -----------------> Inst MEM file*[3] ----------------------
 
 
 *[1] Assembly Program: An assembly program in Simple RISC language.
-     You may find sample assembly program at https://github.com/goyal-naman/architecture/tree/master/AssemblyPrograms
+     You may find sample assembly program at https://github.com/namangl/architecture/tree/master/AssemblyPrograms
      [Usage Guide]: Use as input to Assembler.
 
 *[2] Assembler: Converts assembly program to Inst MEM file.
