@@ -50,8 +50,8 @@ void Core::load_program_memory(){
 			stringstream line(temp);
 			unsigned int address;
 			unsigned int inst;
-			bool isReadAddr = (line>>hex>>address);
-			bool isReadInst = (line>>hex>>inst);
+			bool isReadAddr = static_cast<bool>(line>>hex>>address);
+			bool isReadInst = static_cast<bool>(line>>hex>>inst);
 
 			if (isReadAddr && isReadInst) {
 				if (address >= 0 && address <= MEM_CAPACITY - sizeof(unsigned int)){
