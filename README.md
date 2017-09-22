@@ -42,34 +42,29 @@ Assembly Program*[1] -----------------> Inst MEM file*[3] ----------------------
 
 Directory Structure:
 --------------------
+<pre>
 CSL211-Project
   |
-  |- bin
-  
+  |- bin  
       |
-      |- sim
-      
-  |- include
-  
+      |- sim      
+  |- include  
       |
       |- Core.h
       |- Memory.h
       |- PipelineRegister.h
-      |- Register.h
-      
-  |- src
-  
+      |- Register.h      
+  |- src  
       |- main.cpp
       |- Core.cpp
       |- Memory.cpp
-      |- PipelineRegister.cpp
-      
-  |- test
-  
+      |- PipelineRegister.cpp      
+  |- test  
       |- simple_add.mem
       |- fib.mem
       |- array_add.mem
       |- functioncall.mem
+</pre>
 
 How to build
 ------------
@@ -93,7 +88,7 @@ $./bin/sim -input test/functioncall.mem -output out.txt -debug 1 -pipe -context 
 Use "functioncall.mem" as input and generate output in "out.txt" using pipeline debug level 1 and context of program in "context.txt"
 
 { arguments }
-
+<pre>
 Help
 -h : Display Help
 
@@ -106,6 +101,7 @@ Optional Arguments
 -debug [1 | 2] : Specify debug level
 -mem [Memory_OUT File name] : Specify Memory_OUT File Name
 -context [Context_OUT File name] : Specify Context_OUT File Name
+</pre>
 
 Note
 ----
