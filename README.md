@@ -1,4 +1,3 @@
-=========================================================================
 RISC-Simulator: Functional & Pipeline Simulator for simple RISC processor 
 =========================================================================
 
@@ -19,9 +18,11 @@ For understanding Simple RISC Language refer "Computer Organisation and Architec
 
 FLOW DIAGRAM
 
+<pre>
                        Assembler*[2]                        RISC-Simulator*[4]
 Assembly Program*[1] -----------------> Inst MEM file*[3] ----------------------> Simulated Output*[5]
 
+</pre>
 
 *[1] Assembly Program: An assembly program in Simple RISC language.
      You may find sample assembly program at https://github.com/namangl/architecture/tree/master/AssemblyPrograms
@@ -44,20 +45,27 @@ Directory Structure:
 CSL211-Project
   |
   |- bin
+  
       |
       |- sim
+      
   |- include
+  
       |
       |- Core.h
       |- Memory.h
       |- PipelineRegister.h
       |- Register.h
+      
   |- src
+  
       |- main.cpp
       |- Core.cpp
       |- Memory.cpp
       |- PipelineRegister.cpp
+      
   |- test
+  
       |- simple_add.mem
       |- fib.mem
       |- array_add.mem
@@ -84,7 +92,7 @@ Use "simple_add.mem" as input and generate output in "out.txt" using functional 
 $./bin/sim -input test/functioncall.mem -output out.txt -debug 1 -pipe -context context.txt
 Use "functioncall.mem" as input and generate output in "out.txt" using pipeline debug level 1 and context of program in "context.txt"
 
-{ <arguments> }
+{ arguments }
 
 Help
 -h : Display Help
