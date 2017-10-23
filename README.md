@@ -29,7 +29,7 @@ Assembly Program*[1] -----------------> Inst MEM file*[3] ----------------------
      [Usage Guide]: Use as input to Assembler.
 
 *[2] Assembler: Converts assembly program to Inst MEM file.
-     Use the Assembler designed by Dr. Neeraj Goel, IIT-RPR. Link https://drive.google.com/open?id=0B1ifefwDdR5UdjZjS1locVhBSFk
+     Use the Assembler designed by Dr. Neeraj Goel, IIT-RPR. Link https://goo.gl/tJy5Fx
      [Usage Guide]: Download and extract the tgz file from the link provided and refer its Readme.
      
 *[3] Inst MEM file: Encoded assembly instructions in hex. Generated as Assembler Output.
