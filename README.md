@@ -12,7 +12,7 @@ Table of contents
 Design Doc:
 -----------
 
-To design a Functional and Pipeline Simulator for simple RISC processor. It takes an Assembly Program converted to Instruction MEM File in Simple RISC language, an adapted version of RISC instruction set architecture designed by Dr. Smruti Ranjan Sarangi, IIT Delhi.
+To design a Functional and Pipeline Simulator for simple RISC processor. It takes an Assembly Program converted to Instruction MEM File in Simple RISC language, an adapted version of RISC instruction set architecture.
 
 For understanding Simple RISC Language refer "Computer Organisation and Architecture" book by Dr. Sarangi, IIT Delhi. Link http://www.cse.iitd.ac.in/~srsarangi/archbooksoft.html
 
